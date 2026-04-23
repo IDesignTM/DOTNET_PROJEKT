@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sklep.Core", "Sklep.Core\Sklep.Core.csproj", "{1190D732-C3EF-4411-9B14-44FCBB7C2085}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sklep.Infrastructure", "Sklep.Infrastructure\Sklep.Infrastructure.csproj", "{6062368D-5084-46E0-879B-9C38C6A63939}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sklep.Web", "Sklep.Web\Sklep.Web.csproj", "{61DC2D71-60B5-4C43-A2A1-807E796FD902}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1190D732-C3EF-4411-9B14-44FCBB7C2085}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1190D732-C3EF-4411-9B14-44FCBB7C2085}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1190D732-C3EF-4411-9B14-44FCBB7C2085}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1190D732-C3EF-4411-9B14-44FCBB7C2085}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6062368D-5084-46E0-879B-9C38C6A63939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6062368D-5084-46E0-879B-9C38C6A63939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6062368D-5084-46E0-879B-9C38C6A63939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6062368D-5084-46E0-879B-9C38C6A63939}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61DC2D71-60B5-4C43-A2A1-807E796FD902}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61DC2D71-60B5-4C43-A2A1-807E796FD902}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61DC2D71-60B5-4C43-A2A1-807E796FD902}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61DC2D71-60B5-4C43-A2A1-807E796FD902}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
