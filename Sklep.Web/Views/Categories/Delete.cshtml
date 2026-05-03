@@ -1,0 +1,10 @@
+@model Sklep.Core.Models.Category
+
+<h2>Usuń kategorię</h2>
+
+<p>@Model.Name</p>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit">Usuń</button>
+</form>

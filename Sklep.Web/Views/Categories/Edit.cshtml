@@ -1,0 +1,9 @@
+@model Sklep.Core.Models.Category
+
+<h2>Edytuj kategorię</h2>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="Id" />
+    <input asp-for="Name" />
+    <button type="submit">Zapisz</button>
+</form>
