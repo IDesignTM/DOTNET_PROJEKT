@@ -1,9 +1,22 @@
 @model Sklep.Core.Models.Category
 
+@{
+    ViewData["Title"] = "Edytuj kategorię";
+}
+
 <h2>Edytuj kategorię</h2>
 
-<form asp-action="Edit">
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
     <input type="hidden" asp-for="Id" />
-    <input asp-for="Name" />
-    <button type="submit">Zapisz</button>
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    <a asp-action="Index" class="btn btn-secondary">Wróć</a>
 </form>

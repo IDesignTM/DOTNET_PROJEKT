@@ -21,6 +21,17 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.26" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AdditionalFiles Include="Views\Products\Create.cshtml" />
+    <AdditionalFiles Include="Views\Products\Delete.cshtml" />
+    <AdditionalFiles Include="Views\Products\Edit.cshtml" />
+    <AdditionalFiles Include="Views\Products\Index.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Identity\Data\" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>

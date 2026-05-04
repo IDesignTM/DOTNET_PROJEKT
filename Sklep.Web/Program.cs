@@ -27,8 +27,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// Rejestracja Generycznego Repozytorium
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 var app = builder.Build();
 
