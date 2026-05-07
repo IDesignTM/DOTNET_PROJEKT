@@ -2,9 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Sklep.Core.Interfaces;
 using Sklep.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 
-namespace Sklep.Web.Controllers;
+namespace Sklep.Web.Areas.Admin.Controllers;
 
+[Area("Admin")]
+[Authorize(Roles = "Admin")]
 public class ProductsController : Controller
 {
     private readonly IProductRepository _productRepository;
@@ -23,7 +26,7 @@ public class ProductsController : Controller
         var products = await _productRepository.GetAllWithCategoryAsync();
         return View(products);
     }
-
+    
     public async Task<IActionResult> Details(int id)
     {
         var product = await _productRepository.GetByIdWithCategoryAsync(id);
@@ -33,6 +36,7 @@ public class ProductsController : Controller
         return View(product);
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create()
     {
         await LoadCategoriesAsync();
@@ -41,6 +45,7 @@ public class ProductsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(Product product)
     {
         if (!ModelState.IsValid)
@@ -55,6 +60,7 @@ public class ProductsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var product = await _productRepository.GetByIdAsync(id);
@@ -67,6 +73,7 @@ public class ProductsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(Product product)
     {
         if (!ModelState.IsValid)
@@ -81,6 +88,7 @@ public class ProductsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var product = await _productRepository.GetByIdWithCategoryAsync(id);
@@ -92,6 +100,7 @@ public class ProductsController : Controller
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var product = await _productRepository.GetByIdAsync(id);

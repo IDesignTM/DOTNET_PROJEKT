@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Sklep.Core.Interfaces;
 using Sklep.Core.Models;
+using Microsoft.AspNetCore.Authorization;
 
+[Area("Admin")]
+[Authorize(Roles = "Admin")]
 public class CategoriesController : Controller
 {
     private readonly IBaseRepository<Category> _repo;
@@ -17,12 +20,15 @@ public class CategoriesController : Controller
         return View(categories);
     }
 
+    [Authorize(Roles = "Admin")]
     public IActionResult Create()
     {
         return View();
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(Category category)
     {
         if (!ModelState.IsValid)
@@ -34,6 +40,7 @@ public class CategoriesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var category = await _repo.GetByIdAsync(id);
@@ -43,6 +50,8 @@ public class CategoriesController : Controller
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(Category category)
     {
         if (!ModelState.IsValid)
@@ -54,6 +63,7 @@ public class CategoriesController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var category = await _repo.GetByIdAsync(id);
@@ -63,6 +73,8 @@ public class CategoriesController : Controller
     }
 
     [HttpPost, ActionName("Delete")]
+    [Authorize(Roles = "Admin")]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var category = await _repo.GetByIdAsync(id);

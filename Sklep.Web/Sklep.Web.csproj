@@ -22,14 +22,27 @@
   </ItemGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="Views\Products\Create.cshtml" />
-    <AdditionalFiles Include="Views\Products\Delete.cshtml" />
-    <AdditionalFiles Include="Views\Products\Edit.cshtml" />
-    <AdditionalFiles Include="Views\Products\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Categories\Create.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Categories\Delete.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Categories\Edit.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Categories\Index.cshtml" />
+    <AdditionalFiles Include="Areas\Admin\Views\Products\Details.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Areas\Identity\Data\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Categories\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Categories\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Categories\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Categories\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Products\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Products\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Products\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Products\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Products\Index.cshtml" />
   </ItemGroup>
 
   <PropertyGroup>
