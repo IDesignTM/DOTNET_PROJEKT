@@ -4,6 +4,7 @@ using Sklep.Infrastructure.Data;
 using Sklep.Core.Interfaces;
 using Sklep.Infrastructure.Repositories;
 using Sklep.Core.Models;
+using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +17,9 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-    {
+// builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
         options.Password.RequireDigit = false;
         options.Password.RequiredLength = 6;
         options.Password.RequireNonAlphanumeric = false;
@@ -25,7 +27,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
         options.SignIn.RequireConfirmedAccount = false;
     })
     .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddDefaultUI();
 
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -47,10 +50,43 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+    string[] roles = { "Admin", "User" };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+    }
+
+    string adminEmail = "admin@admin.com";
+    string adminPassword = "Admin123!";
+
+    var admin = await userManager.FindByEmailAsync(adminEmail);
+
+    if (admin == null)
+    {
+        admin = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail
+        };
+
+        await userManager.CreateAsync(admin, adminPassword);
+        await userManager.AddToRoleAsync(admin, "Admin");
+    }
+}
 
 app.Run();
