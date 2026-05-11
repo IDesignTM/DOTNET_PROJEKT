@@ -39,6 +39,7 @@ public class ProductsController : Controller
         return View(product);
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create()
     {
         await LoadCategoriesAsync();
@@ -47,6 +48,7 @@ public class ProductsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create(Product product, List<IFormFile> images)
     {
         ModelState.Remove("Images");
@@ -70,6 +72,7 @@ public class ProductsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var product = await _productRepository.GetByIdWithCategoryAsync(id);
@@ -81,7 +84,8 @@ public class ProductsController : Controller
     }
 
     [HttpPost]
-[ValidateAntiForgeryToken]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
 public async Task<IActionResult> Edit(int id, Product product, List<IFormFile> images, List<int> imagesToDelete)
 {
     if (id != product.Id) return NotFound();
@@ -134,6 +138,7 @@ public async Task<IActionResult> Edit(int id, Product product, List<IFormFile> i
     return RedirectToAction(nameof(Index));
 }
 
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
         var product = await _productRepository.GetByIdWithCategoryAsync(id);
@@ -145,6 +150,7 @@ public async Task<IActionResult> Edit(int id, Product product, List<IFormFile> i
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var product = await _productRepository.GetByIdWithCategoryAsync(id);
