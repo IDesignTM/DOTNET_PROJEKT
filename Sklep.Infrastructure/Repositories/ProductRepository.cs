@@ -16,7 +16,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
         return await _context.Products
             .Include(p => p.Category)
             .Include(p => p.Images)
-            .OrderBy(p => p.Name)
+            .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
     }
 

@@ -50,9 +50,11 @@
                     <div class="card-img-top d-flex align-items-center justify-content-center bg-light rounded-top" style="height: 200px; overflow: hidden;">
                         @if (item.Images != null && item.Images.Any())
                         {
-                            <img src="@item.Images.First().ImagePath"
-                                 alt="@item.Name"
-                                 style="width: 100%; height: 100%; object-fit: cover;"/>
+                            <a asp-action="Details" asp-route-id="@item.Id">
+                                <img src="@item.Images.First().ImagePath"
+                                     alt="@item.Name"
+                                     style="width: 100%; height: 100%; object-fit: cover;" />
+                            </a>
                         }
                         else
                         {
