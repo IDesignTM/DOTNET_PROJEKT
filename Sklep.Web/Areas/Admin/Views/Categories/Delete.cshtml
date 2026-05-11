@@ -1,17 +1,17 @@
 @model Sklep.Core.Models.Category
 
 @{
-    ViewData["Title"] = "Usuń kategorię";
+    ViewData["Title"] = "DELETE CATEGORY";
 }
 
-<h2>Usuń kategorię</h2>
+<h2>DELETE CATEGORY</h2>
 
 <div class="alert alert-warning">
-    Czy na pewno chcesz usunąć kategorię: <strong>@Model.Name</strong>?
+    ARE YOU SURE YOU WANT TO DELETE: <strong>@Model.Name</strong>?
 </div>
 
 <form asp-action="Delete" method="post">
     <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Usuń</button>
-    <a asp-action="Index" class="btn btn-secondary">Anuluj</a>
+    <button type="submit" class="btn btn-danger">DELETE</button>
+    <a asp-action="Index" class="btn btn-secondary">BACK</a>
 </form>
