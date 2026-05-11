@@ -1,18 +1,42 @@
 @model Sklep.Core.Models.Product
 
-    @{
+@{
     ViewData["Title"] = "Szczegóły produktu";
 }
 
 <h2>Szczegóły produktu</h2>
 
-    <div class="card">
+<div class="card mb-4">
     <div class="card-body">
-    <h4>@Model.Name</h4>
-    <p><strong>Opis:</strong> @Model.Description</p>
-    <p><strong>Cena:</strong> @Model.Price</p>
-    <p><strong>Kategoria:</strong> @Model.Category?.Name</p>
+        <h4>@Model.Name</h4>
+        <p><strong>Opis:</strong> @Model.Description</p>
+        <p><strong>Cena:</strong> @Model.Price</p>
+        <p><strong>Kategoria:</strong> @Model.Category?.Name</p>
     </div>
-    </div>
+</div>
 
-    <a asp-action="Index" class="btn btn-secondary mt-3">Wróć</a>
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">Galeria zdjęć</h5>
+    </div>
+    <div class="card-body">
+        @if (Model.Images != null && Model.Images.Any())
+        {
+            <div class="d-flex flex-wrap gap-3">
+                @foreach (var img in Model.Images)
+                {
+                    <img src="@img.ImagePath" class="img-thumbnail shadow-sm" style="width: 200px; height: 200px; object-fit: cover;" alt="Zdjęcie produktu" />
+                }
+            </div>
+        }
+        else
+        {
+            <span class="text-muted">Brak zdjęć dla tego produktu.</span>
+        }
+    </div>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Edytuj</a>
+    <a asp-action="Index" class="btn btn-secondary">Wróć do listy</a>
+</div>

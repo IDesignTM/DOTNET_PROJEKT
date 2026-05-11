@@ -6,9 +6,9 @@
 
 <h2>Edytuj produkt</h2>
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
+    
     <input type="hidden" asp-for="Id" />
 
     <div class="mb-3">
@@ -35,6 +35,33 @@
             <option value="0">-- wybierz kategorię --</option>
         </select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    @if (Model.Images != null && Model.Images.Any())
+    {
+        <div class="mb-4 p-3 bg-light border rounded">
+            <label class="form-label fw-bold">Zarządzaj obecnymi zdjęciami</label>
+            <div class="d-flex flex-wrap gap-3">
+                @foreach (var img in Model.Images)
+                {
+                    <div class="card" style="width: 140px;">
+                        <img src="@img.ImagePath" class="card-img-top" style="height: 120px; object-fit: cover;" />
+                        <div class="card-body text-center p-2">
+                            <div class="form-check d-flex justify-content-center align-items-center">
+                                <input class="form-check-input me-2" type="checkbox" name="imagesToDelete" value="@img.Id" id="del_@img.Id">
+                                <label class="form-check-label text-danger small fw-bold" for="del_@img.Id">Usuń</label>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <small class="text-muted d-block mt-2">Zaznacz zdjęcia, które chcesz trwale usunąć.</small>
+        </div>
+    }
+    
+    <div class="mb-3">
+        <label class="form-label fw-bold">Dodaj nowe zdjęcia</label>
+        <input type="file" name="images" class="form-control" multiple accept="image/jpeg,image/png,image/jpg,image/webp" />
     </div>
 
     <button type="submit" class="btn btn-primary">Zapisz</button>

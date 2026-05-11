@@ -10,12 +10,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Product> Products => Set<Product>();
     public DbSet<Category> Categories => Set<Category>();
+    public DbSet<ProductImage> ProductImages => Set<ProductImage>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-
-        // Automatyczne mapowanie wszystkich pól decimal na format TEXT dla SQLite
+        
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
             var properties = entityType.ClrType.GetProperties()
@@ -26,5 +26,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 builder.Entity(entityType.Name).Property(property.Name).HasConversion<string>();
             }
         }
+        
+        builder.Entity<ProductImage>()
+            .HasOne(pi => pi.Product)
+            .WithMany(p => p.Images)
+            .HasForeignKey(pi => pi.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

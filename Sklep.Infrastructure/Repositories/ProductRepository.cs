@@ -15,6 +15,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         return await _context.Products
             .Include(p => p.Category)
+            .Include(p => p.Images)
             .OrderBy(p => p.Name)
             .ToListAsync();
     }
@@ -23,6 +24,12 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
         return await _context.Products
             .Include(p => p.Category)
+            .Include(p => p.Images)
             .FirstOrDefaultAsync(p => p.Id == id);
+    }
+    
+    public void RemoveImage(ProductImage image)
+    {
+        _context.Set<ProductImage>().Remove(image);
     }
 }
