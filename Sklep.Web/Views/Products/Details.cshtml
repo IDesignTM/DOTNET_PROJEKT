@@ -64,9 +64,13 @@
                     <hr class="w-100 my-4" style="border-top: 1px solid #eee;">
 
                     <div class="d-grid gap-3 w-100 mb-5">
-                        <button class="btn btn-outline-dark btn-lg shadow-sm" type="button" style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; border-width: 2px;">
+                        <a class="btn btn-outline-dark btn-lg shadow-sm"
+                           asp-controller="Cart"
+                           asp-action="AddToCart"
+                           asp-route-id="@Model.Id"
+                           style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; border-width: 2px;">
                             ADD TO CART
-                        </button>
+                        </a>
                     </div>
 
                     <hr class="w-100 my-4" style="border-top: 1px solid #eee;">

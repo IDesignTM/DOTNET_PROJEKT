@@ -17,7 +17,7 @@ public class ProductsController : Controller
         _categoryRepository = categoryRepository;
     }
     
-    public async Task<IActionResult> Index(string? categoryName)
+    public async Task<IActionResult> Index(string? categoryName, string? searchString)
     {
         var products = await _productRepository.GetAllWithCategoryAsync();
     
@@ -26,7 +26,16 @@ public class ProductsController : Controller
             products = products.Where(p => p.Category?.Name == categoryName).ToList();
             ViewBag.CurrentCategory = categoryName;
         }
-        
+
+        if (!string.IsNullOrEmpty(searchString))
+        {
+            products = products
+                .Where(p => p.Name.ToLower().Contains(searchString.ToLower()))
+                .ToList();
+
+            ViewBag.Search = searchString;
+        }
+
         ViewBag.Categories = await _categoryRepository.GetAllAsync();
     
         return View(products);
