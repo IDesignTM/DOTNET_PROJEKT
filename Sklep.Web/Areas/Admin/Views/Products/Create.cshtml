@@ -1,46 +1,46 @@
 @model Sklep.Core.Models.Product
 
 @{
-    ViewData["Title"] = "ADD PRODUCT";
+    ViewData["Title"] = "Dodaj produkt";
 }
 
-<h2>ADD PRODUCT</h2>
+<h2>Dodaj produkt</h2>
 
 <form asp-action="Create" method="post" enctype="multipart/form-data">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
     <div class="mb-3">
-        <label asp-for="Name" class="form-label">NAME</label>
+        <label asp-for="Name" class="form-label">Nazwa</label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Description" class="form-label">DESCRIPTION</label>
+        <label asp-for="Description" class="form-label">Opis</label>
         <textarea asp-for="Description" class="form-control" rows="4"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="Price" class="form-label">PRICE</label>
+        <label asp-for="Price" class="form-label">Cena</label>
         <input asp-for="Price" class="form-control" />
         <span asp-validation-for="Price" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
-        <label asp-for="CategoryId" class="form-label">CATEGORY</label>
+        <label asp-for="CategoryId" class="form-label">Kategoria</label>
         <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
-            <option value="0">-- CHOOSE CATEGORY --</option>
+            <option value="0">-- Wybierz kategorię --</option>
         </select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
     
     <div class="mb-3">
-        <label class="form-label">PHOTOS</label>
+        <label class="form-label">Zdjęcia</label>
         <input type="file" name="images" class="form-control" multiple accept="image/jpeg,image/png,image/jpg" />
-        <small class="text-muted">ALLOWED FORMATS: JPG, PNG.</small>
+        <small class="text-muted">Dozwolone formaty: JPG, PNG.</small>
     </div>
 
-    <button type="submit" class="btn btn-primary">SAVE</button>
-    <a asp-action="Index" class="btn btn-secondary">BACK</a>
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    <a asp-action="Index" class="btn btn-secondary">Wróć</a>
 </form>

@@ -20,10 +20,10 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">HOME</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Strona główna</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">SHOP</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Sklep</a>
                         </li>
                         @if (User.IsInRole("Admin"))
                         {
@@ -34,7 +34,7 @@
                                    role="button"
                                    data-bs-toggle="dropdown"
                                    aria-expanded="false">
-                                    ADMIN PANEL
+                                    Panel administracji
                                 </a>
 
                                 <ul class="dropdown-menu shadow-sm"
@@ -45,7 +45,7 @@
                                            asp-area="Admin"
                                            asp-controller="Products"
                                            asp-action="Index">
-                                            MANAGE PRODUCTS
+                                            Zarządzaj produktami
                                         </a>
                                     </li>
 
@@ -54,7 +54,7 @@
                                            asp-area="Admin"
                                            asp-controller="Categories"
                                            asp-action="Index">
-                                            MANAGE CATEGORIES
+                                            Zarządzaj kategoriami
                                         </a>
                                     </li>
 

@@ -30,9 +30,9 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="CategoryId" class="form-label">CATEGORY</label>
+        <label asp-for="CategoryId" class="form-label">Kategoria</label>
         <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
-            <option value="0">-- SELECT CATEGORY --</option>
+            <option value="0">-- Wybierz kategorię --</option>
         </select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
@@ -40,7 +40,7 @@
     @if (Model.Images != null && Model.Images.Any())
     {
         <div class="mb-4 p-3 bg-light border rounded">
-            <label class="form-label fw-bold">MANAGE PHOTOS</label>
+            <label class="form-label fw-bold">Zarządzaj zdjęciami</label>
             <div class="d-flex flex-wrap gap-3">
                 @foreach (var img in Model.Images)
                 {
@@ -49,21 +49,21 @@
                         <div class="card-body text-center p-2">
                             <div class="form-check d-flex justify-content-center align-items-center">
                                 <input class="form-check-input me-2" type="checkbox" name="imagesToDelete" value="@img.Id" id="del_@img.Id">
-                                <label class="form-check-label text-danger small fw-bold" for="del_@img.Id">DELETE</label>
+                                <label class="form-check-label text-danger small fw-bold" for="del_@img.Id">Usuń</label>
                             </div>
                         </div>
                     </div>
                 }
             </div>
-            <small class="text-muted d-block mt-2">SELECT PHOTOS YOU WANT TO DELETE.</small>
+            <small class="text-muted d-block mt-2">Wybierz zdjęcia, które chcesz usunąć.</small>
         </div>
     }
     
     <div class="mb-3">
-        <label class="form-label fw-bold">ADD NEW PHOTOS</label>
+        <label class="form-label fw-bold">Dodaj zdjęcia</label>
         <input type="file" name="images" class="form-control" multiple accept="image/jpeg,image/png,image/jpg,image/webp" />
     </div>
 
-    <button type="submit" class="btn btn-primary">SAVE</button>
-    <a asp-action="Index" class="btn btn-secondary">BACK</a>
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    <a asp-action="Index" class="btn btn-secondary">Wróć</a>
 </form>

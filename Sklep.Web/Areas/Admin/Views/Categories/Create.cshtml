@@ -1,10 +1,10 @@
 @model Sklep.Core.Models.Category
 
 @{
-    ViewData["Title"] = "ADD CATEGORY";
+    ViewData["Title"] = "Dodaj kategorię";
 }
 
-<h2>ADD CATEGORY</h2>
+<h2>Dodaj kategorię</h2>
 
 <form asp-action="Create" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -15,6 +15,6 @@
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">SAVE</button>
-    <a asp-action="Index" class="btn btn-secondary">BACK</a>
+    <button type="submit" class="btn btn-primary">Zapisz</button>
+    <a asp-action="Index" class="btn btn-secondary">Wróć</a>
 </form>

@@ -9,9 +9,9 @@
         
         <div class="row mb-3">
             <div class="col text-end small">
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted fw-light" style="letter-spacing: 0.1em;">HOME</a>
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="text-decoration-none text-muted fw-light" style="letter-spacing: 0.1em;">Strona głowna</a>
                 <span class="mx-1">/</span> 
-                <a asp-area="" asp-controller="Products" asp-action="Index" class="text-decoration-none text-muted fw-light" style="letter-spacing: 0.1em;">SHOP</a> 
+                <a asp-area="" asp-controller="Products" asp-action="Index" class="text-decoration-none text-muted fw-light" style="letter-spacing: 0.1em;">Sklep</a> 
                 <span class="mx-1">/</span> 
                 <span class="text-muted">@Model.Name.ToUpper()</span>
             </div>
@@ -65,18 +65,18 @@
 
                     <div class="d-grid gap-3 w-100 mb-5">
                         <button class="btn btn-outline-dark btn-lg shadow-sm" type="button" style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; border-width: 2px;">
-                            ADD TO CART
+                            Dodaj do koszyka
                         </button>
                     </div>
 
                     <hr class="w-100 my-4" style="border-top: 1px solid #eee;">
                     
                     <div class="w-100">
-                        <h6 class="fw-bold text-uppercase mb-3" style="letter-spacing: 0.1em;">Product Description</h6>
+                        <h6 class="fw-bold text-uppercase mb-3" style="letter-spacing: 0.1em;">Opis produktu</h6>
                         <p class="lead text-muted" style="white-space: pre-line; font-size: 1rem; line-height: 1.6;">
                             @if (string.IsNullOrEmpty(Model.Description))
                             {
-                                <span>NO DESCRIPTION</span>
+                                <span>Brak opisu</span>
                             }
                             else
                             {
