@@ -1,0 +1,43 @@
+﻿@model List<Sklep.Core.Models.Product>
+
+<h2>Koszyk</h2>
+
+@if (!Model.Any())
+{
+    <p>Koszyk jest pusty.</p>
+}
+else
+{
+    decimal total = 0;
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produkt</th>
+                <th>Cena</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                total += item.Price;
+
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Price zł</td>
+                    <td>
+                        <a class="btn btn-danger"
+                           asp-action="Remove"
+                           asp-route-id="@item.Id">
+                            Usuń
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h4>Suma: @total zł</h4>
+}

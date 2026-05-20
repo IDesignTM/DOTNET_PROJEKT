@@ -21,4 +21,6 @@ public class Product : BaseEntity
     public virtual Category? Category { get; set; }
     
     public virtual ICollection<ProductImage> Images { get; set; } = new List<ProductImage>();
+    
+    public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

@@ -1,7 +1,9 @@
 ﻿@model Sklep.Core.Models.Product
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = Model.Name;
+    var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 }
 
 <div class="container-fluid px-0" style="background-color: #fafafa;">
@@ -20,9 +22,9 @@
         <div class="row g-0" style="min-height: 80vh; background-color: white; border-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
             
             <div class="col-md-7 border-end" style="background-color: white;">
-                <div class="d-flex flex-column h-100 p-5 position-relative">
+                <div class="d-flex flex-column p-5 sticky-top" style="top: 2rem; z-index: 1;">
                     
-                    <div class="d-flex align-items-center justify-content-center flex-grow-1 bg-light rounded" style="min-height: 500px; margin-bottom: 20px; border: 1px solid #eee; overflow: hidden;">
+                    <div class="d-flex align-items-center justify-content-center bg-light rounded" style="height: 500px; margin-bottom: 20px; border: 1px solid #eee; overflow: hidden;">
                         @if (Model.Images != null && Model.Images.Any())
                         {
                             <img src="@Model.Images.First().ImagePath" id="mainImage" alt="@Model.Name" style="width: 100%; height: 100%; object-fit: contain; max-height: 500px;" />
@@ -64,9 +66,13 @@
                     <hr class="w-100 my-4" style="border-top: 1px solid #eee;">
 
                     <div class="d-grid gap-3 w-100 mb-5">
-                        <button class="btn btn-outline-dark btn-lg shadow-sm" type="button" style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; border-width: 2px;">
+                        <a class="btn btn-outline-dark btn-lg shadow-sm"
+                           asp-controller="Cart"
+                           asp-action="AddToCart"
+                           asp-route-id="@Model.Id"
+                           style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; border-width: 2px;">
                             Dodaj do koszyka
-                        </button>
+                        </a>
                     </div>
 
                     <hr class="w-100 my-4" style="border-top: 1px solid #eee;">
@@ -83,6 +89,98 @@
                                 @Model.Description
                             }
                         </p>
+                    </div>
+                    <hr class="w-100 my-4" style="border-top: 1px solid #eee;">
+
+                    <div class="w-100">
+                        <div class="d-flex align-items-center mb-3">
+                            <h6 class="fw-bold text-uppercase mb-0" style="letter-spacing: 0.1em;">Opinie klientów (@Model.Reviews.Count)</h6>
+    
+                            @if (Model.Reviews.Any())
+                            {
+                                var averageRating = Model.Reviews.Average(r => r.Rating);
+                                <div class="ms-3 px-2 py-1 bg-dark text-white rounded d-flex align-items-center shadow-sm" style="font-size: 0.85rem;">
+                                    <span class="text-warning me-1">★</span>
+                                    <span class="fw-bold">@averageRating.ToString("0.0")</span>
+                                    <span class="text-white-50 ms-1 fw-light">/ 5.0</span>
+                                </div>
+                            }
+                        </div>
+    
+                        @if (Model.Reviews.Any())
+                        {
+                            <div class="pe-2" style="max-height: 400px; overflow-y: auto; scrollbar-width: thin;">
+                                @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                                {
+                                    <div class="mb-3 p-3 bg-light rounded border-start border-4 border-dark">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <strong class="small text-uppercase">@(review.User?.UserName ?? "Użytkownik")</strong>
+                                                <span class="text-warning ms-2">
+                                                    @for (int i = 0; i < review.Rating; i++) { <text>★</text> }
+                                                    @for (int i = review.Rating; i < 5; i++) { <text>☆</text> }
+                                                </span>
+                                            </div>
+                                            
+                                            @if (review.UserId == currentUserId || User.IsInRole("Admin"))
+                                            {
+                                                <form asp-action="DeleteReview" method="post" class="m-0 p-0">
+                                                    <input type="hidden" name="reviewId" value="@review.Id" />
+                                                    <input type="hidden" name="productId" value="@Model.Id" />
+                                                    <button type="submit" class="btn btn-link text-danger p-0 ms-3 text-decoration-none small" style="font-size: 0.8rem;" onclick="return confirm('Na pewno usunąć tę opinię?');">
+                                                        [Usuń]
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                        <p class="mb-0 text-muted small">@review.Comment</p>
+                                        <small class="text-muted" style="font-size: 0.75rem;">Dodano: @review.CreatedAt.ToShortDateString()</small>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted small">Ten produkt nie ma jeszcze żadnych opinii.</p>
+                        }
+                    </div>
+                    
+                    <div class="w-100 mt-4">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                           {
+                               <div class="card border-0 bg-light">
+                                   <div class="card-body">
+                                       <h6 class="fw-bold text-uppercase mb-3" style="letter-spacing: 0.1em;">Dodaj swoją opinię</h6>
+                                       <form asp-action="AddReview" method="post">
+                                           <input type="hidden" name="productId" value="@Model.Id" />
+                                           
+                                           <div class="mb-3">
+                                               <label class="form-label small text-uppercase">Ocena</label>
+                                               <select name="rating" class="form-select form-select-sm" required>
+                                                   <option value="5">★★★★★ - Rewelacja</option>
+                                                   <option value="4">★★★★☆ - Bardzo dobry</option>
+                                                   <option value="3">★★★☆☆ - Średni</option>
+                                                   <option value="2">★★☆☆☆ - Słaby</option>
+                                                   <option value="1">★☆☆☆☆ - Tragiczny</option>
+                                               </select>
+                                           </div>
+                                           
+                                           <div class="mb-3">
+                                               <label class="form-label small text-uppercase">Twój komentarz</label>
+                                               <textarea name="comment" class="form-control form-control-sm" rows="3" required></textarea>
+                                           </div>
+                                           
+                                           <button type="submit" class="btn btn-dark btn-sm text-uppercase" style="letter-spacing: 0.1em;">Wyślij opinię</button>
+                                       </form>
+                                   </div>
+                               </div>
+                           }
+                           else
+                           {
+                               <div class="alert alert-secondary text-center small">
+                                   Musisz być <a asp-area="Identity" asp-page="/Account/Login">zalogowany</a>, aby dodać opinię.
+                               </div>
+                           }
                     </div>
                     <div class="flex-grow-1"></div>
                 </div>
