@@ -16,6 +16,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
         return await _context.Products
             .Include(p => p.Category)
             .Include(p => p.Images)
+            .Include(p => p.Tags)
             .OrderByDescending(p => p.CreatedAt)
             .ToListAsync();
     }
@@ -27,6 +28,7 @@ public class ProductRepository : BaseRepository<Product>, IProductRepository
             .Include(p => p.Images)
             .Include(p => p.Reviews)
             .ThenInclude(r => r.User)
+            .Include(p => p.Tags)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
     

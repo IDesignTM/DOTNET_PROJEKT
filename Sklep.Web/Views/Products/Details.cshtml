@@ -59,7 +59,16 @@
             <div class="col-md-5 d-flex flex-column" style="background-color: white;">
                 <div class="p-5 d-flex flex-column flex-grow-1 align-items-start">
                     
-                    <h1 class="display-6 fw-bold mb-3 text-uppercase" style="letter-spacing: 0.05em;">@Model.Name</h1>
+                    <h1 class="display-6 fw-bold mb-2 text-uppercase" style="letter-spacing: 0.05em;">@Model.Name</h1>
+                    @if (Model.Tags != null && Model.Tags.Any())
+                    {
+                        <div class="mb-3">
+                            @foreach (var tag in Model.Tags)
+                            {
+                                <span class="badge bg-dark text-white fw-light me-1" style="letter-spacing: 0.05em;">@tag.Name</span>
+                            }
+                        </div>
+                    }
                     
                     <span class="product-price fs-3">@Model.Price.ToString("C")</span>
 

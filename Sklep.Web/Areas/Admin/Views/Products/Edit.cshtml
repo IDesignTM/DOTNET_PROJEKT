@@ -36,6 +36,26 @@
         </select>
         <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
+    
+    <div class="mb-3">
+        <label class="form-label fw-bold">Tagi produktu</label>
+        <div class="d-flex flex-wrap gap-3">
+            @if (ViewBag.Tags != null)
+            {
+                foreach (var tag in (IEnumerable<Sklep.Core.Models.Tag>)ViewBag.Tags)
+                {
+                    bool isChecked = Model != null && Model.Tags != null && Model.Tags.Any(t => t.Id == tag.Id);
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="selectedTags" value="@tag.Id" id="tag_@tag.Id" @(isChecked ? "checked" : "")>
+                        <label class="form-check-label" for="tag_@tag.Id">
+                            @tag.Name
+                        </label>
+                    </div>
+                }
+            }
+        </div>
+    </div>
 
     @if (Model.Images != null && Model.Images.Any())
     {

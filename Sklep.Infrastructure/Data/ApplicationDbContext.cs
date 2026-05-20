@@ -12,6 +12,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<ProductImage> ProductImages => Set<ProductImage>();
     public DbSet<Review> Reviews => Set<Review>();
+    public DbSet<Tag> Tags => Set<Tag>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -33,5 +34,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .WithMany(p => p.Images)
             .HasForeignKey(pi => pi.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.Entity<Tag>().HasData(
+            new Tag { Id = 1, Name = "Nowość" },
+            new Tag { Id = 2, Name = "Bestseller" },
+            new Tag { Id = 3, Name = "Wyprzedaż" }
+        );
     }
 }
