@@ -11,13 +11,16 @@ public class ProductsController : Controller
 {
     private readonly IProductRepository _productRepository;
     private readonly IBaseRepository<Category> _categoryRepository;
+    private readonly ICurrencyService _currencyService;
 
     public ProductsController(
         IProductRepository productRepository, 
-        IBaseRepository<Category> categoryRepository)
+        IBaseRepository<Category> categoryRepository,
+        ICurrencyService currencyService)
     {
         _productRepository = productRepository;
         _categoryRepository = categoryRepository;
+        _currencyService = currencyService;
     }
     
     public async Task<IActionResult> Index(string? categoryName, string? searchString)
@@ -48,6 +51,10 @@ public class ProductsController : Controller
     {
         var product = await _productRepository.GetByIdWithCategoryAsync(id);
         if (product == null) return NotFound();
+        
+        ViewBag.EurRate = await _currencyService.GetExchangeRateAsync("EUR");
+        ViewBag.UsdRate = await _currencyService.GetExchangeRateAsync("USD");
+
         return View(product);
     }
     
@@ -60,7 +67,7 @@ public class ProductsController : Controller
 
         if (string.IsNullOrEmpty(userId) || rating < 1 || rating > 5 || string.IsNullOrWhiteSpace(comment))
         {
-            return RedirectToAction(nameof(Details), new { id = productId }); // Awaryjny powrót
+            return RedirectToAction(nameof(Details), new { id = productId });
         }
 
         var review = new Review

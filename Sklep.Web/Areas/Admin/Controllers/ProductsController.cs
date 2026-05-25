@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Sklep.Core.Interfaces;
 using Sklep.Core.Models;
+using Sklep.Core.DTOs;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Sklep.Web.Areas.Admin.Controllers;
@@ -41,102 +42,129 @@ public class ProductsController : Controller
 
         return View(product);
     }
-
+    
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create()
     {
         await LoadCategoriesAsync();
         await LoadTagsAsync();
-        return View();
+        
+        return View(new ProductCreateDto());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Create(Product product, List<IFormFile> images, List<int> selectedTags)
+    public async Task<IActionResult> Create(ProductCreateDto dto)
     {
-        ModelState.Remove("Images");
-        ModelState.Remove("Category");
-        ModelState.Remove("Tags");
-
         if (!ModelState.IsValid)
         {
             await LoadCategoriesAsync();
             await LoadTagsAsync();
-            return View(product);
+            return View(dto);
         }
         
-        if (selectedTags != null && selectedTags.Any())
+        var product = new Product
+        {
+            Name = dto.Name,
+            Description = dto.Description,
+            Price = dto.Price,
+            CategoryId = dto.CategoryId
+        };
+
+        if (dto.SelectedTags != null && dto.SelectedTags.Any())
         {
             var allTags = await _tagRepository.GetAllAsync();
-            product.Tags = allTags.Where(t => selectedTags.Contains(t.Id)).ToList();
+            product.Tags = allTags.Where(t => dto.SelectedTags.Contains(t.Id)).ToList();
         }
         
         await _productRepository.AddAsync(product);
         await _productRepository.SaveChangesAsync();
         
-        if (images != null && images.Any())
+        if (dto.Images != null && dto.Images.Any())
         {
-            await SaveProductImages(product, images);
+            await SaveProductImages(product, dto.Images);
             await _productRepository.SaveChangesAsync();
         }
 
         return RedirectToAction(nameof(Index));
     }
-
+    
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Edit(int id)
     {
         var product = await _productRepository.GetByIdWithCategoryAsync(id);
         if (product == null) return NotFound();
 
+        var dto = new ProductEditDto
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+            CategoryId = product.CategoryId,
+            SelectedTags = product.Tags?.Select(t => t.Id).ToList() ?? new List<int>(),
+            ExistingImages = product.Images?.Select(i => new ProductImageDto 
+            { 
+                Id = i.Id, 
+                ImagePath = i.ImagePath 
+            }).ToList() ?? new List<ProductImageDto>()
+        };
+
         await LoadCategoriesAsync();
         await LoadTagsAsync();
-        return View(product);
+        
+        return View(dto);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> Edit(int id, Product product, List<IFormFile> images, List<int> imagesToDelete, List<int> selectedTags) // <--- DODANE selectedTags
+    public async Task<IActionResult> Edit(int id, ProductEditDto dto)
     {
-        if (id != product.Id) return NotFound();
-
-        ModelState.Remove("Images");
-        ModelState.Remove("Category");
-        ModelState.Remove("Tags");
+        if (id != dto.Id) return NotFound();
 
         if (!ModelState.IsValid)
         {
             await LoadCategoriesAsync();
             await LoadTagsAsync();
-            return View(product);
+            
+            var tempProduct = await _productRepository.GetByIdWithCategoryAsync(id);
+            if (tempProduct != null)
+            {
+                dto.ExistingImages = tempProduct.Images?.Select(i => new ProductImageDto 
+                { 
+                    Id = i.Id, 
+                    ImagePath = i.ImagePath 
+                }).ToList() ?? new List<ProductImageDto>();
+            }
+            
+            return View(dto);
         }
         
         var existingProduct = await _productRepository.GetByIdWithCategoryAsync(id);
         if (existingProduct == null) return NotFound();
         
-        existingProduct.Name = product.Name;
-        existingProduct.Description = product.Description;
-        existingProduct.Price = product.Price;
-        existingProduct.CategoryId = product.CategoryId;
+        existingProduct.Name = dto.Name;
+        existingProduct.Description = dto.Description;
+        existingProduct.Price = dto.Price;
+        existingProduct.CategoryId = dto.CategoryId;
         
-        // Aktualizacja Tagi (Czyszczenie starych i dodawanie zaznaczonych)
         existingProduct.Tags.Clear();
-        if (selectedTags != null && selectedTags.Any())
+        if (dto.SelectedTags != null && dto.SelectedTags.Any())
         {
             var allTags = await _tagRepository.GetAllAsync();
-            var tagsToAdd = allTags.Where(t => selectedTags.Contains(t.Id)).ToList();
+            var tagsToAdd = allTags.Where(t => dto.SelectedTags.Contains(t.Id)).ToList();
             foreach (var tag in tagsToAdd)
             {
                 existingProduct.Tags.Add(tag);
             }
         }
         
-        if (imagesToDelete != null && imagesToDelete.Any())
+        if (dto.ImagesToDelete != null && dto.ImagesToDelete.Any())
         {
             string wwwRootPath = _webHostEnvironment.WebRootPath;
-            foreach (var imgId in imagesToDelete)
+            foreach (var imgId in dto.ImagesToDelete)
             {
                 var imgToRemove = existingProduct.Images.FirstOrDefault(i => i.Id == imgId);
                 if (imgToRemove != null)
@@ -148,14 +176,17 @@ public class ProductsController : Controller
             }
         }
         
-        if (images != null && images.Any()) await SaveProductImages(existingProduct, images);
+        if (dto.Images != null && dto.Images.Any()) 
+        {
+            await SaveProductImages(existingProduct, dto.Images);
+        }
         
         _productRepository.Update(existingProduct);
         await _productRepository.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
     }
-
+    
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -195,7 +226,7 @@ public class ProductsController : Controller
 
         return RedirectToAction(nameof(Index));
     }
-
+    
     private async Task LoadCategoriesAsync()
     {
         var categories = (await _categoryRepository.GetAllAsync())

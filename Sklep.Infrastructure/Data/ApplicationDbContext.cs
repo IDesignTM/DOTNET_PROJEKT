@@ -13,6 +13,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ProductImage> ProductImages => Set<ProductImage>();
     public DbSet<Review> Reviews => Set<Review>();
     public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<CurrencyExchangeRate> CurrencyExchangeRates => Set<CurrencyExchangeRate>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

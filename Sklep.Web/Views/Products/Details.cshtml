@@ -70,7 +70,24 @@
                         </div>
                     }
                     
-                    <span class="product-price fs-3">@Model.Price.ToString("C")</span>
+                    <div class="d-flex flex-column align-items-start mb-3">
+                        <span class="product-price fs-3 fw-bold mb-1">@Model.Price.ToString("C")</span>
+                        
+                        @if (ViewBag.EurRate != null && ViewBag.UsdRate != null)
+                        {
+                            var priceEur = Model.Price / (decimal)ViewBag.EurRate;
+                            var priceUsd = Model.Price / (decimal)ViewBag.UsdRate;
+
+                            <div class="text-muted d-flex gap-3" style="font-size: 0.85rem;">
+                                <span>
+                                    <i class="bi bi-globe me-1"></i>~ @priceEur.ToString("F2") EUR
+                                </span>
+                                <span>
+                                    <i class="bi bi-globe me-1"></i>~ @priceUsd.ToString("F2") USD
+                                </span>
+                            </div>
+                        }
+                    </div>
 
                     <hr class="w-100 my-4" style="border-top: 1px solid #eee;">
 

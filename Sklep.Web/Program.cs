@@ -33,6 +33,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
 builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBaseRepository<Tag>, BaseRepository<Tag>>();
+builder.Services.AddHttpClient<Sklep.Core.Interfaces.ICurrencyService, Sklep.Infrastructure.Services.NbpService>();
 
 builder.Services.AddSession();
 
