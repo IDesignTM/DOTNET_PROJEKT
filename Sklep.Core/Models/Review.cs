@@ -11,12 +11,10 @@ public class Review : BaseEntity
     [Required(ErrorMessage = "Treść opinii jest wymagana.")]
     [StringLength(2000)]
     public string Comment { get; set; } = string.Empty;
-
-    // Relacja do Produktu
+    
     public int ProductId { get; set; }
     public virtual Product Product { get; set; } = null!;
-
-    // Relacja do Użytkownika (Identity używa string jako ID)
+    
     public string UserId { get; set; } = string.Empty;
     public virtual ApplicationUser User { get; set; } = null!;
 }

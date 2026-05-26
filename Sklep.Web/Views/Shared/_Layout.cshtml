@@ -20,6 +20,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Strona główna</a>
@@ -41,59 +42,55 @@
 
                                 <ul class="dropdown-menu shadow-sm"
                                     aria-labelledby="adminDropdown">
-
                                     <li>
-                                        <a class="dropdown-item"
-                                           asp-area="Admin"
-                                           asp-controller="Products"
-                                           asp-action="Index">
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Products" asp-action="Index">
                                             Zarządzaj produktami
                                         </a>
                                     </li>
-
                                     <li>
-                                        <a class="dropdown-item"
-                                           asp-area="Admin"
-                                           asp-controller="Categories"
-                                           asp-action="Index">
+                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Categories" asp-action="Index">
                                             Zarządzaj kategoriami
                                         </a>
                                     </li>
-
                                 </ul>
                             </li>
                         }
                     </ul>
-                </div>
-            </div>
-            <ul class="navbar-nav ms-auto">
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Cart" asp-action="Index">
-                            Koszyk (@CartSessionHelper.GetCartCount(Context.Session))
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <span class="nav-link">Witaj @User.Identity.Name!</span>
-                    </li>
-                    <li class="nav-item">
-                        <form method="post" asp-area="Identity" asp-page="/Account/Logout">
-                            <button type="submit" class="nav-link btn btn-link">Wyloguj</button>
-                        </form>
-                    </li>
-                }
-                else
-                {
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Zaloguj</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Rejestracja</a>
-                    </li>
-                }
-            </ul>
-        </nav>
+
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item me-2">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Wishlist" asp-action="Index" style="font-size: 1.2rem; line-height: 1;">
+                                    ❤️
+                                </a>
+                            </li>
+                            <li class="nav-item me-3">
+                                <a class="nav-link text-dark text-nowrap" asp-controller="Cart" asp-action="Index" style="font-size: 1.2rem; line-height: 1;">
+                                    🛒 <span class="fs-6 fw-bold">(@CartSessionHelper.GetCartCount(Context.Session))</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <span class="nav-link text-muted">Witaj @User.Identity.Name!</span>
+                            </li>
+                            <li class="nav-item">
+                                <form method="post" asp-area="Identity" asp-page="/Account/Logout" class="m-0 p-0">
+                                    <button type="submit" class="nav-link btn btn-link text-dark border-0">Wyloguj</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Zaloguj</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Rejestracja</a>
+                            </li>
+                        }
+                    </ul>
+                    
+                </div> </div> </nav>
     </header>
     <div class="container">
         <main role="main" class="pb-3">
