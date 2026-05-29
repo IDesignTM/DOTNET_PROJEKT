@@ -5,6 +5,9 @@ using Sklep.Core.Interfaces;
 using Sklep.Infrastructure.Repositories;
 using Sklep.Core.Models;
 using static System.Formats.Asn1.AsnWriter;
+using Sklep.Infrastructure.Services;
+using Sklep.Core.Interfaces;
+using Sklep.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +37,7 @@ builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBaseRepository<Tag>, BaseRepository<Tag>>();
 builder.Services.AddHttpClient<Sklep.Core.Interfaces.ICurrencyService, Sklep.Infrastructure.Services.NbpService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddSession();
 

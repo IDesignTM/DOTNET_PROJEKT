@@ -268,6 +268,76 @@ namespace Sklep.Infrastructure.Migrations
                     b.ToTable("CurrencyExchangeRates");
                 });
 
+            modelBuilder.Entity("Sklep.Core.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TotalPrice")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Sklep.Core.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UnitPrice")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderItems");
+                });
+
             modelBuilder.Entity("Sklep.Core.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -373,27 +443,7 @@ namespace Sklep.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2026, 5, 26, 10, 35, 57, 581, DateTimeKind.Utc).AddTicks(7810),
-                            Name = "Nowość"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2026, 5, 26, 10, 35, 57, 581, DateTimeKind.Utc).AddTicks(7810),
-                            Name = "Bestseller"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2026, 5, 26, 10, 35, 57, 581, DateTimeKind.Utc).AddTicks(7820),
-                            Name = "Wyprzedaż"
-                        });
+                    b.ToTable("Tag");
                 });
 
             modelBuilder.Entity("Sklep.Core.Models.Wishlist", b =>
@@ -507,6 +557,25 @@ namespace Sklep.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Sklep.Core.Models.OrderItem", b =>
+                {
+                    b.HasOne("Sklep.Core.Models.Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sklep.Core.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Sklep.Core.Models.Product", b =>
                 {
                     b.HasOne("Sklep.Core.Models.Category", "Category")
@@ -570,6 +639,11 @@ namespace Sklep.Infrastructure.Migrations
             modelBuilder.Entity("Sklep.Core.Models.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Sklep.Core.Models.Order", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Sklep.Core.Models.Product", b =>

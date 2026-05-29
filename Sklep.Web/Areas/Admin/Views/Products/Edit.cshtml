@@ -37,26 +37,6 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label fw-bold">Tagi produktu</label>
-        <div class="d-flex flex-wrap gap-3">
-            @if (ViewBag.Tags != null)
-            {
-                foreach (var tag in (IEnumerable<Sklep.Core.Models.Tag>)ViewBag.Tags)
-                {
-                    bool isChecked = Model.SelectedTags.Contains(tag.Id);
-                    
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="SelectedTags" value="@tag.Id" id="tag_@tag.Id" @(isChecked ? "checked" : "")>
-                        <label class="form-check-label" for="tag_@tag.Id">
-                            @tag.Name
-                        </label>
-                    </div>
-                }
-            }
-        </div>
-    </div>
-
-    <div class="mb-3">
         <label class="form-label fw-bold">Obecne zdjęcia (Zaznacz, aby usunąć)</label>
         @if (Model.ExistingImages != null && Model.ExistingImages.Any())
         {

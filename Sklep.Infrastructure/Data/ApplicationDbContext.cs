@@ -9,10 +9,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     public DbSet<Product> Products => Set<Product>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<ProductImage> ProductImages => Set<ProductImage>();
     public DbSet<Review> Reviews => Set<Review>();
-    public DbSet<Tag> Tags => Set<Tag>();
+    //public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<CurrencyExchangeRate> CurrencyExchangeRates => Set<CurrencyExchangeRate>();
     public DbSet<Wishlist> Wishlists => Set<Wishlist>();
     public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
@@ -20,7 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        
+
         foreach (var entityType in builder.Model.GetEntityTypes())
         {
             var properties = entityType.ClrType.GetProperties()
@@ -31,17 +33,22 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
                 builder.Entity(entityType.Name).Property(property.Name).HasConversion<string>();
             }
         }
-        
+
         builder.Entity<ProductImage>()
             .HasOne(pi => pi.Product)
             .WithMany(p => p.Images)
             .HasForeignKey(pi => pi.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.Entity<Tag>().HasData(
-            new Tag { Id = 1, Name = "NowoÅ›Ä‡" },
+
+        /*builder.Entity<Tag>().HasData(
+            new Tag { Id = 1, Name = "Nowoœæ" },
             new Tag { Id = 2, Name = "Bestseller" },
-            new Tag { Id = 3, Name = "WyprzedaÅ¼" }
-        );
+            new Tag { Id = 3, Name = "Wyprzeda¿" }
+        );*/
+
+        builder.Entity<OrderItem>()
+            .HasOne(i => i.Product)
+            .WithMany()
+            .HasForeignKey(i => i.ProductId);
     }
 }

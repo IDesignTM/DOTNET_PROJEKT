@@ -1,0 +1,36 @@
+﻿@model Sklep.Web.ViewModels.CheckoutViewModel
+
+<h2>Zamówienie</h2>
+
+<form asp-action="Checkout" method="post">
+
+    <div class="mb-3">
+        <label>Imię</label>
+        <input asp-for="FirstName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Nazwisko</label>
+        <input asp-for="LastName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Adres</label>
+        <input asp-for="Address" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Miasto</label>
+        <input asp-for="City" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Kod pocztowy</label>
+        <input asp-for="PostalCode" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Złóż zamówienie
+    </button>
+
+</form>
