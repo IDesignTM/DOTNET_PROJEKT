@@ -53,6 +53,16 @@
                                         </a>
                                     </li>
                                 </ul>
+                                    
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   asp-area=""
+                                   asp-controller="Orders"
+                                   asp-action="AllOrders">
+                                    Zamówienia
+                                </a>
                             </li>
                         }
                     </ul>
@@ -60,6 +70,12 @@
                     <ul class="navbar-nav ms-auto align-items-center">
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
+                            <a class="nav-link"
+                               asp-area=""
+                               asp-controller="Orders"
+                               asp-action="MyOrders">
+                                Moje zamówienia
+                            </a>
                             <li class="nav-item me-2">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Wishlist" asp-action="Index" style="font-size: 1.2rem; line-height: 1;">
                                     ❤️

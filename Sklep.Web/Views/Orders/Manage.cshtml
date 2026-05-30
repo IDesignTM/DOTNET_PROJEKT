@@ -1,0 +1,45 @@
+﻿@model Sklep.Core.Models.Order
+
+<h2>Zamówienie #@Model.Id</h2>
+
+<form method="post">
+
+    <div class="mb-3">
+        <label class="form-label">Status</label>
+
+        <select name="status" class="form-select">
+
+            <option value="Nowe"
+                    selected="@(Model.Status=="Nowe")">
+                Nowe
+            </option>
+
+            <option value="W realizacji"
+                    selected="@(Model.Status=="W realizacji")">
+                W realizacji
+            </option>
+
+            <option value="Wysłane"
+                    selected="@(Model.Status=="Wysłane")">
+                Wysłane
+            </option>
+
+            <option value="Dostarczone"
+                    selected="@(Model.Status=="Dostarczone")">
+                Dostarczone
+            </option>
+
+            <option value="Anulowane"
+                    selected="@(Model.Status=="Anulowane")">
+                Anulowane
+            </option>
+
+        </select>
+    </div>
+
+    <button type="submit"
+            class="btn btn-success">
+        Zapisz
+    </button>
+
+</form>

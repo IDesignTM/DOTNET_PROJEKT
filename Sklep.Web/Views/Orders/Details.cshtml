@@ -1,0 +1,81 @@
+﻿@model Sklep.Core.Models.Order
+
+<h2>Zamówienie #@Model.Id</h2>
+
+<hr />
+
+@if (Model.Status == "Nowe")
+{
+    <span class="badge bg-primary">@Model.Status</span>
+}
+else if (Model.Status == "W realizacji")
+{
+    <span class="badge bg-warning">@Model.Status</span>
+}
+else if (Model.Status == "Wysłane")
+{
+    <span class="badge bg-info">@Model.Status</span>
+}
+else if (Model.Status == "Dostarczone")
+{
+    <span class="badge bg-success">@Model.Status</span>
+}
+else
+{
+    <span class="badge bg-danger">@Model.Status</span>
+}
+
+<p>
+    <strong>Imię:</strong>
+    @Model.FirstName
+</p>
+
+<p>
+    <strong>Nazwisko:</strong>
+    @Model.LastName
+</p>
+
+<p>
+    <strong>Adres:</strong>
+    @Model.Address
+</p>
+
+<p>
+    <strong>Miasto:</strong>
+    @Model.City
+</p>
+
+<p>
+    <strong>Kod pocztowy:</strong>
+    @Model.PostalCode
+</p>
+
+<hr />
+
+<h4>Produkty</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Produkt</th>
+            <th>Ilość</th>
+            <th>Cena</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Product.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.UnitPrice.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4>
+    Razem:
+    @Model.TotalPrice.ToString("C")
+</h4>

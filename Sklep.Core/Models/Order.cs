@@ -32,6 +32,7 @@ namespace Sklep.Core.Models
         public decimal TotalPrice { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public string Status { get; set; } = "Nowe";
 
         public List<OrderItem> Items { get; set; } = new();
     }
