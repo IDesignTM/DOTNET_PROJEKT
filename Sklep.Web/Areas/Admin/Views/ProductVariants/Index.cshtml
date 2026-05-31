@@ -1,0 +1,59 @@
+@model IEnumerable<Sklep.Core.Models.ProductVariant>
+
+@{
+    ViewData["Title"] = "Warianty produktu";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Warianty dla: @ViewBag.ProductName</h2>
+        <div>
+            <a asp-action="Create" asp-route-productId="@ViewBag.ProductId" class="btn btn-primary">Dodaj nowy wariant</a>
+            <a asp-controller="Products" asp-action="Index" class="btn btn-secondary">Wróć do listy produktów</a>
+        </div>
+    </div>
+
+    <table class="table table-striped table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Rozmiar</th>
+                <th>Kolor</th>
+                <th>Stan magazynowy</th>
+                <th class="text-end">Akcje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!Model.Any())
+            {
+                <tr>
+                    <td colspan="4" class="text-center">Brak wariantów. Dodaj pierwszy!</td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">@item.Size?.Name</td>
+                        <td>@(string.IsNullOrEmpty(item.Color) ? "Brak (Uniwersalny)" : item.Color)</td>
+                        <td>
+                            @if (item.StockQuantity > 0)
+                            {
+                                <span class="badge bg-success">@item.StockQuantity szt.</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Brak na stanie</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Na pewno usunąć ten wariant?');">
+                                <button type="submit" class="btn btn-sm btn-danger">Usuń</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

@@ -18,6 +18,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<CurrencyExchangeRate> CurrencyExchangeRates => Set<CurrencyExchangeRate>();
     public DbSet<Wishlist> Wishlists => Set<Wishlist>();
     public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
+    public DbSet<Size> Sizes => Set<Size>();
+    public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -41,14 +43,23 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .OnDelete(DeleteBehavior.Cascade);
 
         /*builder.Entity<Tag>().HasData(
-            new Tag { Id = 1, Name = "Nowoœæ" },
+            new Tag { Id = 1, Name = "Nowoï¿½ï¿½" },
             new Tag { Id = 2, Name = "Bestseller" },
-            new Tag { Id = 3, Name = "Wyprzeda¿" }
+            new Tag { Id = 3, Name = "Wyprzedaï¿½" }
         );*/
 
         builder.Entity<OrderItem>()
             .HasOne(i => i.Product)
             .WithMany()
             .HasForeignKey(i => i.ProductId);
+        
+        builder.Entity<Size>().HasData(
+            new Size { Id = 1, Name = "XS" },
+            new Size { Id = 2, Name = "S" },
+            new Size { Id = 3, Name = "M" },
+            new Size { Id = 4, Name = "L" },
+            new Size { Id = 5, Name = "XL" },
+            new Size { Id = 6, Name = "One size" }
+        );
     }
 }

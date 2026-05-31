@@ -6,26 +6,52 @@
 
 <div class="container mt-4">
 
-    <form method="get" asp-action="Index" class="mb-4">
-        <div class="input-group">
-            <input type="text"
-                   name="searchString"
-                   value="@ViewBag.Search"
-                   class="form-control"
-                   placeholder="Szukaj produktu..." />
+    <form method="get" asp-action="Index" class="mb-5 p-3 bg-light rounded shadow-sm">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label small text-uppercase fw-bold">Szukaj</label>
+                <input type="text" name="searchString" value="@ViewBag.Search" class="form-control" placeholder="Nazwa produktu..." />
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label small text-uppercase fw-bold">Rozmiar</label>
+                <select name="sizeId" class="form-select">
+                    <option value="">Wszystkie rozmiary</option>
+                    @if (ViewBag.Sizes != null)
+                    {
+                        foreach (var size in (IEnumerable<Sklep.Core.Models.Size>)ViewBag.Sizes)
+                        {
+                            bool isSelected = ViewBag.CurrentSizeId == size.Id;
+                            <option value="@size.Id" id="size_@size.Id" selected="@isSelected">@size.Name</option>
+                        }
+                    }
+                </select>
+            </div>
 
-            <input type="hidden"
-                   name="categoryName"
-                   value="@ViewBag.CurrentCategory" />
+            <div class="col-md-3">
+                <label class="form-label small text-uppercase fw-bold">Kolor</label>
+                <select name="color" class="form-select">
+                    <option value="">Wszystkie kolory</option>
+                    @if (ViewBag.Colors != null)
+                    {
+                        foreach (var color in (IEnumerable<string>)ViewBag.Colors)
+                        {
+                            bool isSelected = ViewBag.CurrentColor == color;
+                            <option value="@color" selected="@isSelected">@color</option>
+                        }
+                    }
+                </select>
+            </div>
 
-            <button class="btn btn-dark" type="submit">
-                SZUKAJ
-            </button>
+            <input type="hidden" name="categoryName" value="@ViewBag.CurrentCategory" />
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-dark w-100 text-uppercase" type="submit">Filtruj</button>
+            </div>
         </div>
     </form>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        
         @if (ViewBag.CurrentCategory != null)
         {
             <h3 class="text-uppercase mb-0" style="letter-spacing: 0.1em;">@ViewBag.CurrentCategory</h3>
@@ -37,20 +63,17 @@
 
         <div class="dropdown">
             <button class="btn btn-outline-dark dropdown-toggle text-uppercase" style="letter-spacing: 0.05em;" type="button" id="categoryFilter" data-bs-toggle="dropdown" aria-expanded="false">
-                Filtruj
+                Kategorie
             </button>
             <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="categoryFilter">
-                <li>
-                    <a class="dropdown-item" asp-action="Index" asp-route-categoryName="">Wszystkie produkty</a>
-                </li>
+                <li><a class="dropdown-item" asp-action="Index" asp-route-categoryName="" asp-route-searchString="@ViewBag.Search" asp-route-sizeId="@ViewBag.CurrentSizeId" asp-route-color="@ViewBag.CurrentColor">Wszystkie produkty</a></li>
                 <li><hr class="dropdown-divider"></li>
-                
                 @if (ViewBag.Categories != null)
                 {
                     foreach (var cat in (IEnumerable<Sklep.Core.Models.Category>)ViewBag.Categories)
                     {
                         <li>
-                            <a class="dropdown-item" asp-action="Index" asp-route-categoryName="@cat.Name">
+                            <a class="dropdown-item" asp-action="Index" asp-route-categoryName="@cat.Name" asp-route-searchString="@ViewBag.Search" asp-route-sizeId="@ViewBag.CurrentSizeId" asp-route-color="@ViewBag.CurrentColor">
                                 @cat.Name
                             </a>
                         </li>
@@ -58,7 +81,6 @@
                 }
             </ul>
         </div>
-
     </div>
     
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
@@ -70,9 +92,7 @@
                         @if (item.Images != null && item.Images.Any())
                         {
                             <a asp-action="Details" asp-route-id="@item.Id" class="d-block w-100 h-100">
-                                <img src="@item.Images.First().ImagePath"
-                                     alt="@item.Name"
-                                     style="width: 100%; height: 100%; object-fit: cover;" />
+                                <img src="@item.Images.First().ImagePath" alt="@item.Name" style="width: 100%; height: 100%; object-fit: cover;" />
                             </a>
                         }
                         else
@@ -80,18 +100,15 @@
                             <span class="text-muted small text-uppercase" style="letter-spacing: 0.1em;">NO IMAGE</span>
                         }
                     </div>
-
-                    <div class="card-body text-center">
-                        <h5 class="card-title mb-2">
-                            <a asp-action="Details" asp-route-id="@item.Id" class="text-dark text-decoration-none fw-bold">
+                    <div class="card-body text-center bg-white rounded-bottom">
+                        <h5 class="card-title mb-2" style="font-size: 1rem;">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="text-dark text-decoration-none fw-bold text-uppercase" style="letter-spacing: 0.05em;">
                                 @item.Name
                             </a>
                         </h5>
-
-                        <span class="product-price">
+                        <span class="product-price text-muted" style="font-size: 0.95rem;">
                             @item.Price.ToString("C")
                         </span>
-
                     </div>
                 </div>
             </div>

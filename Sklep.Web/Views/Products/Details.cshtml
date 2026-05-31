@@ -88,6 +88,27 @@
                             </div>
                         }
                     </div>
+                    
+                    <div class="w-100 my-4">
+                        <label class="form-label small text-uppercase fw-bold" style="letter-spacing: 0.05em;">Dostępne warianty</label>
+                        @if (Model.Variants != null && Model.Variants.Any(v => v.StockQuantity > 0))
+                        {
+                            <select name="selectedVariantId" class="form-select form-select-md mb-2" style="border-radius: 4px;">
+                                @foreach (var variant in Model.Variants.Where(v => v.StockQuantity > 0))
+                                {
+                                    <option value="@variant.Id">
+                                        Rozmiar: @(variant.Size?.Name ?? "-") | Kolor: @(string.IsNullOrEmpty(variant.Color) ? "Uniwersalny" : variant.Color) (@variant.StockQuantity szt.)
+                                    </option>
+                                }
+                            </select>
+                        }
+                        else
+                        {
+                            <div class="alert alert-danger small text-uppercase py-2" style="letter-spacing: 0.05em;">
+                                Produkt chwilowo niedostępny w magazynie
+                            </div>
+                        }
+                    </div>
 
                     <hr class="w-100 my-4" style="border-top: 1px solid #eee;">
 
