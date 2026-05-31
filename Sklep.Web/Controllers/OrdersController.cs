@@ -146,4 +146,19 @@ public class OrdersController : Controller
 
         return RedirectToAction(nameof(AllOrders));
     }
+
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> AdminDetails(int id)
+    {
+        var order = await _context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(o => o.Id == id);
+
+        if (order == null)
+            return NotFound();
+
+        return View(order);
+    }
+
 }

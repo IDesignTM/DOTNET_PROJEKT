@@ -1,0 +1,38 @@
+﻿@model Sklep.Core.Models.Order
+
+<h2>Szczegóły zamówienia #@Model.Id</h2>
+
+<hr />
+
+<p><strong>Klient:</strong> @Model.FirstName @Model.LastName</p>
+<p><strong>Adres:</strong> @Model.Address</p>
+<p><strong>Miasto:</strong> @Model.City</p>
+<p><strong>Kod pocztowy:</strong> @Model.PostalCode</p>
+<p><strong>Status:</strong> @Model.Status</p>
+<p><strong>Wartość:</strong> @Model.TotalPrice zł</p>
+
+<h4>Produkty</h4>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Produkt</th>
+            <th>Ilość</th>
+            <th>Cena</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Product.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.UnitPrice zł</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="AllOrders" class="btn btn-secondary">
+    Powrót
+</a>

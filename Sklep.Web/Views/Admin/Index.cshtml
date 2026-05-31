@@ -1,0 +1,77 @@
+﻿@model Sklep.Web.ViewModels.AdminDashboardViewModel
+
+<h2>Panel administratora</h2>
+
+<div class="row mt-4">
+
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>@Model.ProductsCount</h3>
+                <p>Produktów</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>@Model.CategoriesCount</h3>
+                <p>Kategorii</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>@Model.UsersCount</h3>
+                <p>Użytkowników</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>@Model.OrdersCount</h3>
+                <p>Zamówień</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card mt-3">
+    <div class="card-body text-center">
+        <h2>@Model.TotalRevenue.ToString("C")</h2>
+        <p>Łączny przychód</p>
+    </div>
+</div>
+
+<hr />
+
+<h3>Ostatnie zamówienia</h3>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nr zamówienia</th>
+            <th>Klient</th>
+            <th>Kwota</th>
+            <th>Data</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var order in Model.LatestOrders)
+        {
+            <tr>
+                <td>#@order.Id</td>
+                <td>@order.FirstName @order.LastName</td>
+                <td>@order.TotalPrice.ToString("C")</td>
+                <td>@order.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>

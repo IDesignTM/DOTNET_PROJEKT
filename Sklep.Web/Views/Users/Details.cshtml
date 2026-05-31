@@ -1,0 +1,35 @@
+﻿@model Sklep.Core.Models.ApplicationUser
+
+<h2>Szczegóły użytkownika</h2>
+
+<div class="card">
+    <div class="card-body">
+
+        <p>
+            <strong>Login:</strong>
+            @Model.UserName
+        </p>
+
+        <p>
+            <strong>Email:</strong>
+            @Model.Email
+        </p>
+
+        <p>
+            <strong>Liczba zamówień:</strong>
+            @ViewBag.OrdersCount
+        </p>
+
+        <p>
+            <strong>Łączna wartość zakupów:</strong>
+            @ViewBag.TotalSpent.ToString("C")
+        </p>
+
+    </div>
+</div>
+
+<br />
+
+<a asp-action="Index" class="btn btn-secondary">
+    Powrót
+</a>
