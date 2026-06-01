@@ -2,5 +2,5 @@ namespace Sklep.Core.Interfaces;
 
 public interface ICurrencyService
 {
-    Task<decimal> GetExchangeRateAsync(string currencyCode);
+    Task<decimal?> GetExchangeRateAsync(string currencyCode);
 }

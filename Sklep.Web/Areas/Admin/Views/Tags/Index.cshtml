@@ -1,0 +1,50 @@
+@model IEnumerable<Sklep.Core.Models.Tag>
+
+@{
+    ViewData["Title"] = "Zarządzaj tagami";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-uppercase fw-bold text-dark mb-0" style="letter-spacing: 0.05em;">Zarządzaj tagami</h2>
+        <a asp-action="Create" class="btn btn-dark text-uppercase px-4" style="font-size: 0.85rem; letter-spacing: 0.05em;">Dodaj nowy tag</a>
+    </div>
+
+    <div class="card border-0 shadow-sm bg-white">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-uppercase small fw-bold" style="letter-spacing: 0.05em;">
+                    <tr>
+                        <th class="ps-4 py-3">Nazwa tagu</th>
+                        <th class="text-end pe-4 py-3">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="2" class="text-center py-4 text-muted small">Brak tagów w bazie danych.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="badge bg-dark text-white text-uppercase px-2 py-1" style="font-size: 0.75rem; letter-spacing: 0.05em;">@item.Name</span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Edytuj</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Usuń</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

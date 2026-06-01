@@ -14,7 +14,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<ProductImage> ProductImages => Set<ProductImage>();
     public DbSet<Review> Reviews => Set<Review>();
-    //public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<CurrencyExchangeRate> CurrencyExchangeRates => Set<CurrencyExchangeRate>();
     public DbSet<Wishlist> Wishlists => Set<Wishlist>();
     public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
@@ -42,11 +42,11 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasForeignKey(pi => pi.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        /*builder.Entity<Tag>().HasData(
-            new Tag { Id = 1, Name = "Nowo��" },
+        builder.Entity<Tag>().HasData(
+            new Tag { Id = 1, Name = "Nowość" },
             new Tag { Id = 2, Name = "Bestseller" },
-            new Tag { Id = 3, Name = "Wyprzeda�" }
-        );*/
+            new Tag { Id = 3, Name = "Wyprzedaż" }
+        );
 
         builder.Entity<OrderItem>()
             .HasOne(i => i.Product)

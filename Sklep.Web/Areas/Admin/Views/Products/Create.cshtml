@@ -4,43 +4,82 @@
     ViewData["Title"] = "Dodaj produkt";
 }
 
-<h2>Dodaj produkt</h2>
+<div class="container py-4">
+    <h2 class="mb-4 text-uppercase fw-bold" style="letter-spacing: 0.05em;">Dodaj nowy produkt</h2>
 
-<form asp-action="Create" method="post" enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="card border-0 shadow-sm bg-white p-4">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-    <div class="mb-3">
-        <label asp-for="Name" class="form-label">Nazwa</label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label fw-bold small text-uppercase">Nazwa produktu</label>
+                <input asp-for="Name" class="form-control" placeholder="np. Skórzana kurtka Celine" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label fw-bold small text-uppercase">Opis</label>
+                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Szczegółowy opis produktu..."></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label fw-bold small text-uppercase">Cena (PLN)</label>
+                <input asp-for="Price" type="number" step="0.01" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CategoryId" class="form-label fw-bold small text-uppercase">Kategoria</label>
+                <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
+                    <option value="">-- Wybierz kategorię --</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger small"></span>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label fw-bold small text-uppercase" style="letter-spacing: 0.05em;">Tagi produktu</label>
+                <div class="d-flex flex-wrap gap-3 p-3 border rounded bg-light">
+                    @if (ViewBag.Tags != null)
+                    {
+                        foreach (var tag in (IEnumerable<Sklep.Core.Models.Tag>)ViewBag.Tags)
+                        {
+                            bool isChecked = Model != null && Model.SelectedTags != null && Model.SelectedTags.Contains(tag.Id);
+                            
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       name="SelectedTags" 
+                                       value="@tag.Id" 
+                                       id="tag_@tag.Id" 
+                                       @(isChecked ? "checked" : "")>
+                                <label class="form-check-label px-1" for="tag_@tag.Id">
+                                    @tag.Name
+                                </label>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted small">Brak zdefiniowanych tagów w bazie.</span>
+                    }
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label class="form-label fw-bold small text-uppercase">Zdjęcia produktu</label>
+                <input type="file" name="images" class="form-control" multiple accept="image/jpeg,image/png,image/jpg" />
+                <small class="text-muted">Dozwolone formaty: JPG, PNG. Możesz wybrać kilka plików jednocześnie.</small>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-dark text-uppercase px-4" style="letter-spacing: 0.05em;">Zapisz produkt</button>
+                <a asp-action="Index" class="btn btn-outline-secondary text-uppercase px-4" style="letter-spacing: 0.05em;">Anuluj</a>
+            </div>
+        </form>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label">Opis</label>
-        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Price" class="form-label">Cena</label>
-        <input asp-for="Price" class="form-control" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="CategoryId" class="form-label">Kategoria</label>
-        <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select">
-            <option value="0">-- Wybierz kategorię --</option>
-        </select>
-        <span asp-validation-for="CategoryId" class="text-danger"></span>
-    </div>
-    
-    <div class="mb-3">
-        <label class="form-label">Zdjęcia</label>
-        <input type="file" name="images" class="form-control" multiple accept="image/jpeg,image/png,image/jpg" />
-        <small class="text-muted">Dozwolone formaty: JPG, PNG.</small>
-    </div>
-
-    <button type="submit" class="btn btn-primary">Zapisz</button>
-    <a asp-action="Index" class="btn btn-secondary">Wróć</a>
-</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

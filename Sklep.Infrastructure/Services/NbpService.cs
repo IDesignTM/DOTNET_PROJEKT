@@ -17,8 +17,8 @@ public class NbpService : ICurrencyService
         _httpClient = httpClient;
         _context = context;
     }
-
-    public async Task<decimal> GetExchangeRateAsync(string currencyCode)
+    
+    public async Task<decimal?> GetExchangeRateAsync(string currencyCode)
     {
         currencyCode = currencyCode.ToUpper();
         
@@ -26,7 +26,7 @@ public class NbpService : ICurrencyService
             .Where(r => r.CurrencyCode == currencyCode)
             .OrderByDescending(r => r.FetchedAt)
             .FirstOrDefaultAsync();
-
+        
         if (cachedRate != null && cachedRate.FetchedAt > DateTime.UtcNow.AddHours(-12))
         {
             return cachedRate.Rate;
@@ -34,8 +34,11 @@ public class NbpService : ICurrencyService
 
         try
         {
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+            
             var url = $"https://api.nbp.pl/api/exchangerates/rates/a/{currencyCode}/?format=json";
-            var response = await _httpClient.GetFromJsonAsync<NbpResponse>(url);
+            
+            var response = await _httpClient.GetFromJsonAsync<NbpResponse>(url, cts.Token);
             
             if (response?.Rates != null && response.Rates.Any())
             {
@@ -54,12 +57,12 @@ public class NbpService : ICurrencyService
                 return newRateValue;
             }
         }
-        catch
+        catch (Exception)
         {
             if (cachedRate != null) return cachedRate.Rate;
         }
-
-        return currencyCode == "EUR" ? 4.30m : 4.00m;
+        
+        return null;
     }
 }
 

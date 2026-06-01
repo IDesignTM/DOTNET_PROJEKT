@@ -1,24 +1,25 @@
-@model Sklep.Core.DTOs.CategoryDto
+@model Sklep.Core.DTOs.TagDto
 
 @{
-    ViewData["Title"] = "Dodaj kategorię";
+    ViewData["Title"] = "Edytuj tag";
 }
 
 <div class="container py-4">
-    <h2 class="mb-4 text-uppercase fw-bold" style="letter-spacing: 0.05em;">Dodaj kategorię</h2>
+    <h2 class="mb-4 text-uppercase fw-bold" style="letter-spacing: 0.05em;">Edytuj tag</h2>
 
     <div class="card border-0 shadow-sm bg-white p-4" style="max-width: 500px;">
-        <form asp-action="Create" method="post">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
             <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
             <div class="mb-4">
-                <label asp-for="Name" class="form-label fw-bold small text-uppercase">Nazwa kategorii</label>
-                <input asp-for="Name" class="form-control" placeholder="np. Outerwear, Footwear" />
+                <label asp-for="Name" class="form-label fw-bold small text-uppercase">Nazwa etykiety (tagu)</label>
+                <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger small"></span>
             </div>
 
             <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-dark text-uppercase px-4" style="letter-spacing: 0.05em;">Zapisz</button>
+                <button type="submit" class="btn btn-dark text-uppercase px-4" style="letter-spacing: 0.05em;">Zapisz zmiany</button>
                 <a asp-action="Index" class="btn btn-outline-secondary text-uppercase px-4" style="letter-spacing: 0.05em;">Anuluj</a>
             </div>
         </form>

@@ -1,14 +1,18 @@
-@model Sklep.Core.DTOs.CategoryDto
+@model Sklep.Core.DTOs.TagDto
 
 @{
-    ViewData["Title"] = "Usuń kategorię";
+    ViewData["Title"] = "Usuń tag";
 }
 
 <div class="container py-4">
-    <h2 class="mb-4 text-uppercase fw-bold text-danger" style="letter-spacing: 0.05em;">Usuń kategorię</h2>
+    <h2 class="mb-4 text-uppercase fw-bold text-danger" style="letter-spacing: 0.05em;">Usuń tag</h2>
 
     <div class="card border-0 shadow-sm bg-white p-4" style="max-width: 500px;">
-        <p class="mb-4">Czy na pewno chcesz trwale usunąć kategorię <strong>@Model.Name</strong>? Przypisane do niej produkty utracą powiązanie strukturalne.</p>
+        <p class="mb-4">
+            Czy na pewno chcesz trwale usunąć tag 
+            <span class="badge bg-dark text-white text-uppercase px-2 py-1" style="font-size: 0.8rem; letter-spacing: 0.05em;">@Model.Name</span>? 
+            Przypisane do niego produkty utracą to powiązanie.
+        </p>
 
         <form asp-action="Delete" method="post">
             <input type="hidden" asp-for="Id" />
