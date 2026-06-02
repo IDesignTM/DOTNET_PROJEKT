@@ -89,39 +89,46 @@
                         }
                     </div>
                     
+                    @{
+    var isAvailable = Model.Variants != null && Model.Variants.Any(v => v.StockQuantity > 0);
+}
+
                     <div class="w-100 my-4">
                         <label class="form-label small text-uppercase fw-bold" style="letter-spacing: 0.05em;">Dostępne warianty</label>
-                        @if (Model.Variants != null && Model.Variants.Any(v => v.StockQuantity > 0))
-                        {
-                            <select name="selectedVariantId" class="form-select form-select-md mb-2" style="border-radius: 4px;">
-                                @foreach (var variant in Model.Variants.Where(v => v.StockQuantity > 0))
-                                {
-                                    <option value="@variant.Id">
-                                        Rozmiar: @(variant.Size?.Name ?? "-") | Kolor: @(string.IsNullOrEmpty(variant.Color) ? "Uniwersalny" : variant.Color) (@variant.StockQuantity szt.)
-                                    </option>
-                                }
-                            </select>
-                        }
-                        else
-                        {
-                            <div class="alert alert-danger small text-uppercase py-2" style="letter-spacing: 0.05em;">
-                                Produkt chwilowo niedostępny w magazynie
-                            </div>
-                        }
-                    </div>
-
-                    <hr class="w-100 my-4" style="border-top: 1px solid #eee;">
-
-                    <div class="d-grid gap-3 w-100 mb-5">
-                        <a class="btn btn-outline-dark btn-lg shadow-sm"
-                           asp-controller="Cart"
-                           asp-action="AddToCart"
-                           asp-route-id="@Model.Id"
-                           style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; border-width: 2px;">
-                            Dodaj do koszyka
-                        </a>
                         
-                        <form asp-controller="Wishlist" asp-action="AddToWishlist" method="post" class="w-100 m-0 p-0">
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post" class="w-100 m-0 p-0">
+                            @if (isAvailable)
+                            {
+                                <select name="selectedVariantId" class="form-select form-select-md mb-4" style="border-radius: 4px;">
+                                    @foreach (var variant in Model.Variants.Where(v => v.StockQuantity > 0))
+                                    {
+                                        <option value="@variant.Id">
+                                            Rozmiar: @(variant.Size?.Name ?? "-") | Kolor: @(string.IsNullOrEmpty(variant.Color) ? "Uniwersalny" : variant.Color) (@variant.StockQuantity szt.)
+                                        </option>
+                                    }
+                                </select>
+                                
+                                <div class="d-grid gap-3 w-100 mb-5">
+                                    <button type="submit" class="btn btn-outline-dark btn-lg shadow-sm" style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; border-width: 2px;">
+                                        Dodaj do koszyka
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-danger small text-uppercase py-2 mb-4" style="letter-spacing: 0.05em;">
+                                    Produkt całkowicie wyprzedany
+                                </div>
+                                
+                                <div class="d-grid gap-3 w-100 mb-5">
+                                    <button type="button" disabled class="btn btn-secondary btn-lg shadow-sm" style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; opacity: 0.6;">
+                                        Wyprzedane
+                                    </button>
+                                </div>
+                            }
+                        </form>
+                    
+                        <form asp-controller="Wishlist" asp-action="AddToWishlist" method="post" class="w-100 m-0 p-0 mb-5">
                             <input type="hidden" name="productId" value="@Model.Id" />
                             <button type="submit" class="btn btn-light btn-md w-100 border text-uppercase shadow-sm" style="font-size: 0.8rem; letter-spacing: 0.1em;">
                                 ❤️ Dodaj do listy życzeń

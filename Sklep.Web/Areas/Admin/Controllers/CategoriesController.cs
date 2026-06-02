@@ -59,8 +59,7 @@ public class CategoriesController : Controller
 
         return View(dto);
     }
-
-    // POST: Admin/Categories/Edit/5
+    
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, CategoryDto dto)
