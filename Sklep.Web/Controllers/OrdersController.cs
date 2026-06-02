@@ -6,6 +6,9 @@ using Sklep.Core.Models;
 using Sklep.Infrastructure.Data;
 using Sklep.Web.ViewModels;
 using System.Security.Claims;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace Sklep.Web.Controllers;
 
@@ -159,6 +162,68 @@ public class OrdersController : Controller
             return NotFound();
 
         return View(order);
+    }
+
+    public async Task<IActionResult> GeneratePdf(int id)
+    {
+        var order = await _context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(o => o.Id == id);
+
+        if (order == null)
+            return NotFound();
+
+        if (!User.IsInRole("Admin"))
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (order.UserId != userId)
+                return Forbid();
+        }
+
+        var pdf = Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                page.Margin(30);
+
+                page.Content().Column(col =>
+                {
+                    col.Item().Text($"Faktura nr {order.Id}")
+                        .FontSize(20);
+
+                    col.Item().Text($"Data: {order.CreatedAt:yyyy-MM-dd}");
+
+                    col.Item().Text($"Klient: {order.FirstName} {order.LastName}");
+
+                    col.Item().Text($"Adres: {order.Address}");
+
+                    col.Item().Text($"{order.PostalCode} {order.City}");
+
+                    col.Item().PaddingTop(20);
+
+                    foreach (var item in order.Items)
+                    {
+                        col.Item().Text(
+                            $"{item.Product.Name} x {item.Quantity} - {item.UnitPrice:C}");
+                    }
+
+                    col.Item().PaddingTop(20);
+
+                    col.Item().Text(
+                        $"Razem: {order.TotalPrice:C}")
+                        .FontSize(16);
+                });
+            });
+        });
+
+        var bytes = pdf.GeneratePdf();
+
+        return File(
+            bytes,
+            "application/pdf",
+            $"Faktura_{order.Id}.pdf");
     }
 
 }

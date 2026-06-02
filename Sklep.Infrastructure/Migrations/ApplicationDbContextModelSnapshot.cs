@@ -485,37 +485,37 @@ namespace Sklep.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 5, 31, 22, 4, 18, 311, DateTimeKind.Utc).AddTicks(1050),
+                            CreatedAt = new DateTime(2026, 6, 1, 17, 47, 55, 816, DateTimeKind.Utc).AddTicks(8782),
                             Name = "XS"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 5, 31, 22, 4, 18, 311, DateTimeKind.Utc).AddTicks(1050),
+                            CreatedAt = new DateTime(2026, 6, 1, 17, 47, 55, 816, DateTimeKind.Utc).AddTicks(8785),
                             Name = "S"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 5, 31, 22, 4, 18, 311, DateTimeKind.Utc).AddTicks(1050),
+                            CreatedAt = new DateTime(2026, 6, 1, 17, 47, 55, 816, DateTimeKind.Utc).AddTicks(8786),
                             Name = "M"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 5, 31, 22, 4, 18, 311, DateTimeKind.Utc).AddTicks(1050),
+                            CreatedAt = new DateTime(2026, 6, 1, 17, 47, 55, 816, DateTimeKind.Utc).AddTicks(8786),
                             Name = "L"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 5, 31, 22, 4, 18, 311, DateTimeKind.Utc).AddTicks(1050),
+                            CreatedAt = new DateTime(2026, 6, 1, 17, 47, 55, 816, DateTimeKind.Utc).AddTicks(8787),
                             Name = "XL"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 5, 31, 22, 4, 18, 311, DateTimeKind.Utc).AddTicks(1050),
+                            CreatedAt = new DateTime(2026, 6, 1, 17, 47, 55, 816, DateTimeKind.Utc).AddTicks(8787),
                             Name = "One size"
                         });
                 });

@@ -75,6 +75,12 @@ else
     </tbody>
 </table>
 
+<a asp-action="GeneratePdf"
+   asp-route-id="@Model.Id"
+   class="btn btn-success">
+    Pobierz fakturę PDF
+</a>
+
 <h4>
     Razem:
     @Model.TotalPrice.ToString("C")

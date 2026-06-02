@@ -8,8 +8,11 @@ using static System.Formats.Asn1.AsnWriter;
 using Sklep.Infrastructure.Services;
 using Sklep.Core.Interfaces;
 using Sklep.Infrastructure.Services;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
