@@ -59,7 +59,8 @@ else
         <tr>
             <th>Produkt</th>
             <th>Ilość</th>
-            <th>Cena</th>
+            <th>Cena za sztukę</th>
+            <th>Wartość</th>
         </tr>
     </thead>
 
@@ -70,6 +71,7 @@ else
                 <td>@item.Product.Name</td>
                 <td>@item.Quantity</td>
                 <td>@item.UnitPrice.ToString("C")</td>
+                <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
             </tr>
         }
     </tbody>

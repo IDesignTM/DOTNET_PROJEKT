@@ -40,7 +40,7 @@ public class OrdersController : Controller
         if (string.IsNullOrEmpty(cartJson))
             return RedirectToAction("Index", "Cart");
 
-        var cart = JsonConvert.DeserializeObject<List<Product>>(cartJson);
+        var cart = JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
 
         if (cart == null || !cart.Any())
             return RedirectToAction("Index", "Cart");
@@ -55,16 +55,16 @@ public class OrdersController : Controller
             Address = model.Address,
             City = model.City,
             PostalCode = model.PostalCode,
-            TotalPrice = cart.Sum(p => p.Price)
+            TotalPrice = cart.Sum(i => i.Product.Price * i.Quantity)
         };
 
-        foreach (var product in cart)
+        foreach (var item in cart)
         {
             order.Items.Add(new OrderItem
             {
-                ProductId = product.Id,
-                Quantity = 1,
-                UnitPrice = product.Price
+                ProductId = item.Product.Id,
+                Quantity = item.Quantity,
+                UnitPrice = item.Product.Price
             });
         }
 
@@ -188,34 +188,84 @@ public class OrdersController : Controller
             {
                 page.Margin(30);
 
+                page.Header().Text($"FAKTURA nr FV/{DateTime.Now.Year}/{order.Id}")
+                    .FontSize(22)
+                    .Bold()
+                    .AlignCenter();
+
                 page.Content().Column(col =>
                 {
-                    col.Item().Text($"Faktura nr {order.Id}")
-                        .FontSize(20);
+                    col.Item().PaddingTop(20);
 
-                    col.Item().Text($"Data: {order.CreatedAt:yyyy-MM-dd}");
+                    col.Item().Text("SKLEP ODZIEŻOWY")
+                        .Bold()
+                        .FontSize(16);
 
-                    col.Item().Text($"Klient: {order.FirstName} {order.LastName}");
+                    col.Item().Text("ul. Wiejska 1");
+                    col.Item().Text("15-351 Białystok");
+                    col.Item().Text("NIP: 8239401642");
+                    col.Item().Text("tel. 764 329 443");
+                    col.Item().Text("e-mail: sklep@wp.pl");
 
-                    col.Item().Text($"Adres: {order.Address}");
+                    col.Item().PaddingTop(15);
 
+                    col.Item().Text($"Data wystawienia: {order.CreatedAt:yyyy-MM-dd}");
+
+                    col.Item().PaddingTop(15);
+
+                    col.Item().Text("NABYWCA")
+                        .Bold();
+
+                    col.Item().Text($"{order.FirstName} {order.LastName}");
+                    col.Item().Text(order.Address);
                     col.Item().Text($"{order.PostalCode} {order.City}");
 
                     col.Item().PaddingTop(20);
 
-                    foreach (var item in order.Items)
+                    col.Item().Table(table =>
                     {
-                        col.Item().Text(
-                            $"{item.Product.Name} x {item.Quantity} - {item.UnitPrice:C}");
-                    }
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn(4);
+                            columns.RelativeColumn(1);
+                            columns.RelativeColumn(2);
+                            columns.RelativeColumn(2);
+                        });
+
+                        table.Header(header =>
+                        {
+                            header.Cell().Border(1).Padding(5).Text("Produkt").Bold();
+                            header.Cell().Border(1).Padding(5).Text("Ilość").Bold();
+                            header.Cell().Border(1).Padding(5).Text("Cena/szt.").Bold();
+                            header.Cell().Border(1).Padding(5).Text("Wartość").Bold();
+                        });
+
+                        foreach (var item in order.Items)
+                        {
+                            table.Cell().Border(1).Padding(5)
+                                .Text(item.Product.Name);
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text(item.Quantity.ToString());
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text(item.UnitPrice.ToString("C"));
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text((item.Quantity * item.UnitPrice).ToString("C"));
+                        }
+                    });
 
                     col.Item().PaddingTop(20);
 
-                    col.Item().Text(
-                        $"Razem: {order.TotalPrice:C}")
+                    col.Item()
+                        .AlignRight()
+                        .Text($"Razem do zapłaty: {order.TotalPrice:C}")
+                        .Bold()
                         .FontSize(16);
                 });
             });
+
         });
 
         var bytes = pdf.GeneratePdf();
