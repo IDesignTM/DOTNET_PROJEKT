@@ -18,4 +18,5 @@ public class CheckoutViewModel
 
     [Required]
     public string PostalCode { get; set; } = string.Empty;
+    public string? DiscountCode { get; set; }
 }

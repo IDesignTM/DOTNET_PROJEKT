@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sklep.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using Sklep.Infrastructure.Data;
 namespace Sklep.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260605124217_AddPayment")]
+    partial class AddPayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.26");
@@ -268,31 +271,6 @@ namespace Sklep.Infrastructure.Migrations
                     b.ToTable("CurrencyExchangeRates");
                 });
 
-            modelBuilder.Entity("Sklep.Core.Models.DiscountCode", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DiscountPercent")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("ExpirationDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DiscountCodes");
-                });
-
             modelBuilder.Entity("Sklep.Core.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -545,37 +523,37 @@ namespace Sklep.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 6, 5, 13, 12, 0, 296, DateTimeKind.Utc).AddTicks(9929),
+                            CreatedAt = new DateTime(2026, 6, 5, 12, 42, 16, 996, DateTimeKind.Utc).AddTicks(5372),
                             Name = "XS"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 6, 5, 13, 12, 0, 296, DateTimeKind.Utc).AddTicks(9931),
+                            CreatedAt = new DateTime(2026, 6, 5, 12, 42, 16, 996, DateTimeKind.Utc).AddTicks(5374),
                             Name = "S"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 6, 5, 13, 12, 0, 296, DateTimeKind.Utc).AddTicks(9932),
+                            CreatedAt = new DateTime(2026, 6, 5, 12, 42, 16, 996, DateTimeKind.Utc).AddTicks(5375),
                             Name = "M"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 6, 5, 13, 12, 0, 296, DateTimeKind.Utc).AddTicks(9933),
+                            CreatedAt = new DateTime(2026, 6, 5, 12, 42, 16, 996, DateTimeKind.Utc).AddTicks(5376),
                             Name = "L"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 6, 5, 13, 12, 0, 296, DateTimeKind.Utc).AddTicks(9933),
+                            CreatedAt = new DateTime(2026, 6, 5, 12, 42, 16, 996, DateTimeKind.Utc).AddTicks(5376),
                             Name = "XL"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 6, 5, 13, 12, 0, 296, DateTimeKind.Utc).AddTicks(9934),
+                            CreatedAt = new DateTime(2026, 6, 5, 12, 42, 16, 996, DateTimeKind.Utc).AddTicks(5377),
                             Name = "One size"
                         });
                 });

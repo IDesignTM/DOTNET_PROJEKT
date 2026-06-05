@@ -47,6 +47,19 @@ public class OrdersController : Controller
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        decimal total = cart.Sum(i => i.Product.Price * i.Quantity);
+
+        var discount = await _context.DiscountCodes
+            .FirstOrDefaultAsync(x =>
+            x.Code == model.DiscountCode &&
+            x.IsActive &&
+            x.ExpirationDate > DateTime.Now);
+
+        if (discount != null)
+        {
+            total -= total * (discount.DiscountPercent / 100);
+        }
+
         var order = new Order
         {
             UserId = userId!,
@@ -55,7 +68,7 @@ public class OrdersController : Controller
             Address = model.Address,
             City = model.City,
             PostalCode = model.PostalCode,
-            TotalPrice = cart.Sum(i => i.Product.Price * i.Quantity)
+            TotalPrice = total
         };
 
         foreach (var item in cart)
@@ -72,9 +85,25 @@ public class OrdersController : Controller
 
         await _context.SaveChangesAsync();
 
+        var payment = new Payment
+        {
+            OrderId = order.Id,
+            Amount = order.TotalPrice,
+            Method = "Płatność online",
+            Status = "Oczekująca"
+        };
+
+        _context.Payments.Add(payment);
+
+        await _context.SaveChangesAsync();
+
         HttpContext.Session.Remove("Cart");
 
-        return RedirectToAction("Success", new { id = order.Id });
+        return RedirectToAction(
+            "Pay",
+            "Payment",
+            new { orderId = order.Id }
+        );
     }
 
     public IActionResult Success(int id)
@@ -100,7 +129,8 @@ public class OrdersController : Controller
 
         var order = await _context.Orders
             .Include(o => o.Items)
-            .ThenInclude(i => i.Product)
+                .ThenInclude(i => i.Product)
+            .Include(o => o.Payment)
             .FirstOrDefaultAsync(o =>
                 o.Id == id &&
                 o.UserId == userId);

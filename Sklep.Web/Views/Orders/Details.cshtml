@@ -77,6 +77,29 @@ else
     </tbody>
 </table>
 
+<h4>Płatność</h4>
+
+<p>
+    <strong>Status:</strong>
+    @Model.Payment?.Status
+</p>
+
+<p>
+    <strong>Metoda:</strong>
+    @Model.Payment?.Method
+</p>
+
+@if (Model.Payment != null &&
+    Model.Payment.Status == "Oczekująca")
+{
+    <a asp-controller="Payment"
+       asp-action="Pay"
+       asp-route-orderId="@Model.Id"
+       class="btn btn-success">
+        Opłać zamówienie
+    </a>
+}
+
 <a asp-action="GeneratePdf"
    asp-route-id="@Model.Id"
    class="btn btn-success">

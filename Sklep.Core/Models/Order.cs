@@ -33,6 +33,7 @@ namespace Sklep.Core.Models
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string Status { get; set; } = "Nowe";
+        public Payment? Payment { get; set; }
 
         public List<OrderItem> Items { get; set; } = new();
     }

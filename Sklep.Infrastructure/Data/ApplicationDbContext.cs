@@ -1,3 +1,4 @@
+using System.Reflection.Emit;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Sklep.Core.Models;
@@ -20,6 +21,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
     public DbSet<Size> Sizes => Set<Size>();
     public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
+    public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<DiscountCode> DiscountCodes => Set<DiscountCode>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -60,6 +63,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             new Size { Id = 4, Name = "L" },
             new Size { Id = 5, Name = "XL" },
             new Size { Id = 6, Name = "One size" }
+        );
+
+        builder.Entity<Order>()
+            .HasOne(o => o.Payment)
+            .WithOne(p => p.Order)
+            .HasForeignKey<Payment>(p => p.OrderId
         );
     }
 }
