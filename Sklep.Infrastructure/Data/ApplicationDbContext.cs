@@ -24,6 +24,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<DiscountCode> DiscountCodes => Set<DiscountCode>();
     public DbSet<ProductQuestion> ProductQuestions => Set<ProductQuestion>();
+    public DbSet<DiscountCodeUsage> DiscountCodeUsages => Set<DiscountCodeUsage>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

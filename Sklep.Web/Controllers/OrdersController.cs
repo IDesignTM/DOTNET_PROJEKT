@@ -49,15 +49,20 @@ public class OrdersController : Controller
 
         decimal total = cart.Sum(i => i.Product.Price * i.Quantity);
 
-        var discount = await _context.DiscountCodes
-            .FirstOrDefaultAsync(x =>
-            x.Code == model.DiscountCode &&
-            x.IsActive &&
-            x.ExpirationDate > DateTime.Now);
+        DiscountCode? discount = null;
 
-        if (discount != null)
+        if (!string.IsNullOrWhiteSpace(model.DiscountCode))
         {
-            total -= total * (discount.DiscountPercent / 100);
+            discount = await _context.DiscountCodes
+                .FirstOrDefaultAsync(x =>
+                    x.Code == model.DiscountCode &&
+                    x.IsActive &&
+                    x.ExpirationDate > DateTime.Now);
+
+            if (discount != null)
+            {
+                total -= total * (discount.DiscountPercent / 100);
+            }
         }
 
         var order = new Order
@@ -82,7 +87,6 @@ public class OrdersController : Controller
         }
 
         _context.Orders.Add(order);
-
         await _context.SaveChangesAsync();
 
         var payment = new Payment
@@ -94,8 +98,20 @@ public class OrdersController : Controller
         };
 
         _context.Payments.Add(payment);
-
         await _context.SaveChangesAsync();
+
+        if (discount != null)
+        {
+            var usage = new DiscountCodeUsage
+            {
+                DiscountCodeId = discount.Id,
+                OrderId = order.Id,
+                UserId = userId!
+            };
+
+            _context.DiscountCodeUsages.Add(usage);
+            await _context.SaveChangesAsync();
+        }
 
         HttpContext.Session.Remove("Cart");
 

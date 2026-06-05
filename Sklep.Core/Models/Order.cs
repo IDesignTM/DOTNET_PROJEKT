@@ -36,5 +36,6 @@ namespace Sklep.Core.Models
         public Payment? Payment { get; set; }
 
         public List<OrderItem> Items { get; set; } = new();
+        public ICollection<DiscountCodeUsage> DiscountCodeUsages { get; set; } = new List<DiscountCodeUsage>();
     }
 }

@@ -11,5 +11,6 @@
         public bool IsActive { get; set; } = true;
 
         public DateTime ExpirationDate { get; set; }
+        public ICollection<DiscountCodeUsage> Usages { get; set; } = new List<DiscountCodeUsage>();
     }
 }
