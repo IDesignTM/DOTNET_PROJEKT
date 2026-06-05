@@ -24,4 +24,5 @@ public class Product : BaseEntity
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
     public virtual ICollection<Tag> Tags { get; set; } = new List<Tag>();
     public virtual ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
+    public ICollection<ProductQuestion> ProductQuestions { get; set; } = new List<ProductQuestion>();
 }

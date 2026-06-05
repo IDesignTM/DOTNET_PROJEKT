@@ -236,6 +236,35 @@
                                </div>
                            }
                     </div>
+                    <h4>Pytania użytkowników</h4>
+
+                    @foreach (var q in Model.ProductQuestions)
+                    {
+                        <div class="border p-2 mb-2">
+                            <strong>@q.Question</strong><br />
+
+                            @if (!string.IsNullOrEmpty(q.Answer))
+                            {
+                                <span class="text-success">@q.Answer</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Brak odpowiedzi</span>
+                            }
+                        </div>
+                    }
+                    <form asp-controller="ProductQuestions" asp-action="Add" method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="productId" value="@Model.Id" />
+
+                        <textarea name="question" class="form-control"></textarea>
+
+                        <button class="btn btn-primary mt-2">
+                            Zadaj pytanie
+                        </button>
+                    </form>
                     <div class="flex-grow-1"></div>
                 </div>
             </div>

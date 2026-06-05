@@ -23,6 +23,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
     public DbSet<Payment> Payments => Set<Payment>();
     public DbSet<DiscountCode> DiscountCodes => Set<DiscountCode>();
+    public DbSet<ProductQuestion> ProductQuestions => Set<ProductQuestion>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
