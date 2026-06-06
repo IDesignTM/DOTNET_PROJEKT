@@ -19,4 +19,6 @@ public class CheckoutViewModel
     public string? PostalCode { get; set; }
 
     public string? DiscountCode { get; set; }
+    public int? ShippingMethodId { get; set; }
+    public decimal ShippingCost { get; set; }
 }

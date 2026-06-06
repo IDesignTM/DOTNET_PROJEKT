@@ -51,6 +51,12 @@ public class OrdersController : Controller
             System.Globalization.CultureInfo.InvariantCulture
         );
 
+        var shippingMethods = await _context.ShippingMethods
+            .Where(x => x.IsActive)
+            .ToListAsync();
+
+        ViewBag.ShippingMethods = shippingMethods;
+
         return View(new CheckoutViewModel());
     }
 
@@ -73,8 +79,29 @@ public class OrdersController : Controller
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        decimal total = cart.Sum(i => i.Product.Price * i.Quantity);
+        decimal productsTotal = cart.Sum(i => i.Product.Price * i.Quantity);
 
+        decimal shippingCost = 0;
+        string? shippingName = null;
+
+        if (model.ShippingMethodId.HasValue)
+        {
+            var shipping = await _context.ShippingMethods
+                .FirstOrDefaultAsync(x => x.Id == model.ShippingMethodId);
+
+            if (shipping != null)
+            {
+                shippingCost = shipping.Price;
+                shippingName = shipping.Name;
+            }
+        }
+        else
+        {
+            shippingName = "Odbiór osobisty";
+        }
+
+        decimal discountAmount = 0;
+        string? discountCode = null;
         DiscountCode? discount = null;
 
         if (!string.IsNullOrWhiteSpace(model.DiscountCode))
@@ -87,9 +114,12 @@ public class OrdersController : Controller
 
             if (discount != null)
             {
-                total -= total * (discount.DiscountPercent / 100);
+                discountAmount = productsTotal * (discount.DiscountPercent / 100);
+                discountCode = discount.Code;
             }
         }
+
+        decimal total = (productsTotal - discountAmount) + shippingCost;
 
         string address;
         string city;
@@ -127,7 +157,14 @@ public class OrdersController : Controller
             Address = address,
             City = city,
             PostalCode = postalCode,
-            TotalPrice = total
+            TotalPrice = total,
+
+            ShippingMethodId = model.ShippingMethodId,
+            ShippingMethodName = shippingName,
+            ShippingPrice = shippingCost,
+
+            DiscountAmount = discountAmount,
+            DiscountCode = discountCode
         };
 
         foreach (var item in cart)
@@ -337,8 +374,7 @@ public class OrdersController : Controller
 
                     col.Item().PaddingTop(15);
 
-                    col.Item().Text("NABYWCA")
-                        .Bold();
+                    col.Item().Text("NABYWCA").Bold();
 
                     col.Item().Text($"{order.FirstName} {order.LastName}");
                     col.Item().Text(order.Address);
@@ -364,8 +400,13 @@ public class OrdersController : Controller
                             header.Cell().Border(1).Padding(5).Text("Wartość").Bold();
                         });
 
+                        decimal productsTotal = 0;
+
                         foreach (var item in order.Items)
                         {
+                            var value = item.UnitPrice * item.Quantity;
+                            productsTotal += value;
+
                             table.Cell().Border(1).Padding(5)
                                 .Text(item.Product.Name);
 
@@ -376,8 +417,39 @@ public class OrdersController : Controller
                                 .Text(item.UnitPrice.ToString("C"));
 
                             table.Cell().Border(1).Padding(5)
-                                .Text((item.Quantity * item.UnitPrice).ToString("C"));
+                                .Text(value.ToString("C"));
                         }
+
+                        if (order.ShippingPrice > 0)
+                        {
+                            table.Cell().Border(1).Padding(5)
+                                .Text($"Dostawa ({order.ShippingMethodName ?? "wysyłka"})");
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text("1");
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text(order.ShippingPrice.ToString("C"));
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text(order.ShippingPrice.ToString("C"));
+                        }
+
+                        if (order.DiscountAmount > 0)
+                        {
+                            table.Cell().Border(1).Padding(5)
+                                .Text($"Rabat {order.DiscountCode ?? ""}");
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text("-");
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text("-");
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text($"- {order.DiscountAmount:C}");
+                        }
+
                     });
 
                     col.Item().PaddingTop(20);
@@ -389,15 +461,11 @@ public class OrdersController : Controller
                         .FontSize(16);
                 });
             });
-
         });
 
         var bytes = pdf.GeneratePdf();
 
-        return File(
-            bytes,
-            "application/pdf",
-            $"Faktura_{order.Id}.pdf");
+        return File(bytes, "application/pdf", $"Faktura_{order.Id}.pdf");
     }
 
 }

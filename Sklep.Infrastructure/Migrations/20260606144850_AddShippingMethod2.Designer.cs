@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sklep.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using Sklep.Infrastructure.Data;
 namespace Sklep.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260606144850_AddShippingMethod2")]
+    partial class AddShippingMethod2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.26");
@@ -395,13 +398,6 @@ namespace Sklep.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("DiscountAmount")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DiscountCode")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -411,16 +407,6 @@ namespace Sklep.Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int?>("ShippingMethodId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ShippingMethodName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ShippingPrice")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -745,37 +731,37 @@ namespace Sklep.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 6, 6, 15, 28, 50, 89, DateTimeKind.Utc).AddTicks(1636),
+                            CreatedAt = new DateTime(2026, 6, 6, 14, 48, 50, 307, DateTimeKind.Utc).AddTicks(1303),
                             Name = "XS"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 6, 6, 15, 28, 50, 89, DateTimeKind.Utc).AddTicks(1639),
+                            CreatedAt = new DateTime(2026, 6, 6, 14, 48, 50, 307, DateTimeKind.Utc).AddTicks(1306),
                             Name = "S"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 6, 6, 15, 28, 50, 89, DateTimeKind.Utc).AddTicks(1639),
+                            CreatedAt = new DateTime(2026, 6, 6, 14, 48, 50, 307, DateTimeKind.Utc).AddTicks(1307),
                             Name = "M"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 6, 6, 15, 28, 50, 89, DateTimeKind.Utc).AddTicks(1640),
+                            CreatedAt = new DateTime(2026, 6, 6, 14, 48, 50, 307, DateTimeKind.Utc).AddTicks(1307),
                             Name = "L"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 6, 6, 15, 28, 50, 89, DateTimeKind.Utc).AddTicks(1640),
+                            CreatedAt = new DateTime(2026, 6, 6, 14, 48, 50, 307, DateTimeKind.Utc).AddTicks(1308),
                             Name = "XL"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 6, 6, 15, 28, 50, 89, DateTimeKind.Utc).AddTicks(1641),
+                            CreatedAt = new DateTime(2026, 6, 6, 14, 48, 50, 307, DateTimeKind.Utc).AddTicks(1308),
                             Name = "One size"
                         });
                 });

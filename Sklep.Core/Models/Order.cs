@@ -34,6 +34,12 @@ namespace Sklep.Core.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public string Status { get; set; } = "Nowe";
         public Payment? Payment { get; set; }
+        public int? ShippingMethodId { get; set; }
+        public string? ShippingMethodName { get; set; }
+        public decimal ShippingPrice { get; set; }
+
+        public decimal DiscountAmount { get; set; }
+        public string? DiscountCode { get; set; }
 
         public List<OrderItem> Items { get; set; } = new();
         public ICollection<DiscountCodeUsage> DiscountCodeUsages { get; set; } = new List<DiscountCodeUsage>();

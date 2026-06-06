@@ -59,6 +59,23 @@
         <small id="discountMessage"></small>
     </div>
 
+    <div class="mb-3">
+        <label>Metoda dostawy</label>
+
+        <select asp-for="ShippingMethodId" class="form-control" id="shippingSelect">
+            <option value="" data-price="0">-- wybierz --</option>
+
+            @foreach (var s in ViewBag.ShippingMethods)
+            {
+                <option value="@s.Id" data-price="@s.Price">
+                    @s.Name (@s.Price zł)
+                </option>
+            }
+        </select>
+    </div>
+
+    <input type="hidden" id="baseTotal" value="@ViewBag.Total" />
+
     <br>
     <h5>Do zapłaty: <span id="totalPrice">@ViewBag.Total</span> zł</h5>
     <br>
@@ -91,40 +108,69 @@
     </script>
 
     <script>
-        let baseTotal = parseFloat('@ViewBag.Total');
+        document.addEventListener("DOMContentLoaded", function () {
 
-        document.getElementById("checkDiscount")
-            .addEventListener("click", async function () {
-
-            const code = document.getElementById("discountCode").value;
+            // ===== ELEMENTY =====
+            const shippingSelect = document.getElementById("shippingSelect");
+            const totalPriceEl = document.getElementById("totalPrice");
+            const baseTotalEl = document.getElementById("baseTotal");
+            const discountInput = document.getElementById("discountCode");
+            const checkBtn = document.getElementById("checkDiscount");
             const msg = document.getElementById("discountMessage");
 
-            const formData = new FormData();
-            formData.append("code", code);
+            // ===== STAN =====
+            const baseTotal = parseFloat(baseTotalEl.value || "0");
+            let discountPercent = 0;
 
-            const response = await fetch('/Orders/ValidateDiscount', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'RequestVerificationToken':
-                        document.querySelector('input[name="__RequestVerificationToken"]').value
-                }
-            });
+            // ===== FUNKCJA LICZENIA =====
+            function recalc() {
 
-            const data = await response.json();
+                const shippingOption = shippingSelect.options[shippingSelect.selectedIndex];
+                const shipping = parseFloat(shippingOption?.dataset.price || "0");
 
-            msg.textContent = data.message;
-            msg.className = data.valid ? "text-success" : "text-danger";
+                const discounted = baseTotal - (baseTotal * discountPercent / 100);
+                const finalTotal = discounted + shipping;
 
-            let finalTotal = baseTotal;
-
-            if (data.valid) {
-                const discount = data.percent;
-                finalTotal = baseTotal - (baseTotal * discount / 100);
+                totalPriceEl.innerText = finalTotal.toFixed(2);
             }
 
-            document.getElementById("totalPrice").textContent =
-                finalTotal.toFixed(2);
+            // ===== DOSTAWA =====
+            shippingSelect.addEventListener("change", recalc);
+
+            // ===== RABAT =====
+            checkBtn.addEventListener("click", async function () {
+
+                const formData = new FormData();
+                formData.append("code", discountInput.value);
+
+                const response = await fetch('/Orders/ValidateDiscount', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'RequestVerificationToken':
+                            document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                });
+
+                const data = await response.json();
+
+                console.log("discount response:", data);
+
+                if (data.valid) {
+                    discountPercent = Number(data.percent || 0);
+                    msg.textContent = "Kod aktywny";
+                    msg.className = "text-success";
+                } else {
+                    discountPercent = 0;
+                    msg.textContent = "Kod nieprawidłowy";
+                    msg.className = "text-danger";
+                }
+
+                recalc();
+            });
+
+            // ===== START =====
+            recalc();
         });
     </script>
 </form>

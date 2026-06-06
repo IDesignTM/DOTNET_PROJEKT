@@ -75,6 +75,24 @@ else
             </tr>
         }
     </tbody>
+
+    @if (!string.IsNullOrEmpty(Model.ShippingMethodName))
+    {
+        <tr class="table-light">
+            <td>@Model.ShippingMethodName</td>
+            <td>1</td>
+            <td>@Model.ShippingPrice zł</td>
+            <td>@Model.ShippingPrice zł</td>
+        </tr>
+    }
+
+    @if (Model.DiscountAmount > 0)
+    {
+        <tr>
+            <td>Rabat</td>
+            <td>-@Model.DiscountAmount zł (@Model.DiscountCode)</td>
+        </tr>
+    }
 </table>
 
 <h4>Płatność</h4>

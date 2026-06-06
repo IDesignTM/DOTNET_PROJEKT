@@ -28,6 +28,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Address> Addresses => Set<Address>();
     public DbSet<LoginHistory> LoginHistories => Set<LoginHistory>();
     public DbSet<ProductViewHistory> ProductViewHistories => Set<ProductViewHistory>();
+    public DbSet<ShippingMethod> ShippingMethods => Set<ShippingMethod>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -80,6 +81,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(a => a.User)
             .WithMany(u => u.Addresses)
             .HasForeignKey(a => a.UserId
+        );
+
+        builder.Entity<ShippingMethod>().HasData(
+            new ShippingMethod { Id = 1, Name = "Kurier DHL", Price = 15, IsActive = true },
+            new ShippingMethod { Id = 2, Name = "Paczkomat", Price = 10, IsActive = true },
+            new ShippingMethod { Id = 3, Name = "Odbiór osobisty", Price = 0, IsActive = true }
         );
     }
 }
