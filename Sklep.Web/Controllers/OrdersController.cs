@@ -23,9 +23,17 @@ public class OrdersController : Controller
     }
 
     [HttpGet]
-    public IActionResult Checkout()
+    public async Task<IActionResult> Checkout()
     {
-        return View();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var addresses = await _context.Addresses
+            .Where(a => a.UserId == userId)
+            .ToListAsync();
+
+        ViewBag.Addresses = addresses;
+
+        return View(new CheckoutViewModel());
     }
 
     [HttpPost]
@@ -65,14 +73,42 @@ public class OrdersController : Controller
             }
         }
 
+        string address;
+        string city;
+        string postalCode;
+
+        if (model.AddressMode == "saved")
+        {
+            var saved = await _context.Addresses
+                .FirstOrDefaultAsync(a =>
+                    a.Id == model.SelectedAddressId &&
+                    a.UserId == userId);
+
+            if (saved == null)
+            {
+                ModelState.AddModelError("", "Nie wybrano adresu.");
+                return View(model);
+            }
+
+            address = saved.Street;
+            city = saved.City;
+            postalCode = saved.PostalCode;
+        }
+        else
+        {
+            address = model.Address!;
+            city = model.City!;
+            postalCode = model.PostalCode!;
+        }
+
         var order = new Order
         {
             UserId = userId!,
             FirstName = model.FirstName,
             LastName = model.LastName,
-            Address = model.Address,
-            City = model.City,
-            PostalCode = model.PostalCode,
+            Address = address,
+            City = city,
+            PostalCode = postalCode,
             TotalPrice = total
         };
 

@@ -11,12 +11,15 @@ public class CheckoutViewModel
     public string LastName { get; set; } = string.Empty;
 
     [Required]
-    public string Address { get; set; } = string.Empty;
+    public string AddressMode { get; set; } = "new";
 
-    [Required]
-    public string City { get; set; } = string.Empty;
+    public int? SelectedAddressId { get; set; }
 
-    [Required]
-    public string PostalCode { get; set; } = string.Empty;
+    public string? Address { get; set; }
+
+    public string? City { get; set; }
+
+    public string? PostalCode { get; set; }
+
     public string? DiscountCode { get; set; }
 }

@@ -4,5 +4,5 @@ namespace Sklep.Core.Models;
 
 public class ApplicationUser : IdentityUser
 {
-    // Tu na razie pusto, ale fundament już jest.
+    public ICollection<Address> Addresses { get; set; } = new List<Address>();
 }

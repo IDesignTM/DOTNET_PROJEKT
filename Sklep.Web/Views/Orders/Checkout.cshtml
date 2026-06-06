@@ -15,29 +15,75 @@
     </div>
 
     <div class="mb-3">
-        <label>Adres</label>
-        <input asp-for="Address" class="form-control" />
+        <label>Wybierz adres</label>
+        <select asp-for="AddressMode" class="form-control">
+            <option value="new">Nowy adres</option>
+            <option value="saved">Zapisany adres</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Zapisane adresy</label>
+        <select asp-for="SelectedAddressId" id="savedAddressSelect" class="form-control">
+            <option value="">-- wybierz --</option>
+
+            @foreach (var a in ViewBag.Addresses)
+            {
+                <option value="@a.Id"
+                        data-address="@a.Street"
+                        data-city="@a.City"
+                        data-postal="@a.PostalCode">
+                    @a.Street, @a.City, @a.PostalCode
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Ulica</label>
+        <input asp-for="Address" id="addressInput" class="form-control" />
     </div>
 
     <div class="mb-3">
         <label>Miasto</label>
-        <input asp-for="City" class="form-control" />
+        <input asp-for="City" id="cityInput" class="form-control" />
     </div>
 
     <div class="mb-3">
         <label>Kod pocztowy</label>
-        <input asp-for="PostalCode" class="form-control" />
+        <input asp-for="PostalCode" id="postalInput" class="form-control" />
     </div>
 
-    <div class="form-group">
+    <div class="mb-3">
         <label>Kod rabatowy</label>
         <input asp-for="DiscountCode" class="form-control" />
     </div>
 
-    <br>
-
     <button type="submit" class="btn btn-success">
         Złóż zamówienie
     </button>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const select = document.getElementById("savedAddressSelect");
+
+            select.addEventListener("change", function () {
+
+                const selected =
+                    this.options[this.selectedIndex];
+
+                document.getElementById("addressInput").value =
+                    selected.dataset.address || "";
+
+                document.getElementById("cityInput").value =
+                    selected.dataset.city || "";
+
+                document.getElementById("postalInput").value =
+                    selected.dataset.postal || "";
+            });
+
+        });
+    </script>
 
 </form>

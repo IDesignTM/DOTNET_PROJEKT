@@ -25,6 +25,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<DiscountCode> DiscountCodes => Set<DiscountCode>();
     public DbSet<ProductQuestion> ProductQuestions => Set<ProductQuestion>();
     public DbSet<DiscountCodeUsage> DiscountCodeUsages => Set<DiscountCodeUsage>();
+    public DbSet<Address> Addresses => Set<Address>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -71,6 +72,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .HasOne(o => o.Payment)
             .WithOne(p => p.Order)
             .HasForeignKey<Payment>(p => p.OrderId
+        );
+
+        builder.Entity<Address>()
+            .HasOne(a => a.User)
+            .WithMany(u => u.Addresses)
+            .HasForeignKey(a => a.UserId
         );
     }
 }
