@@ -10,9 +10,6 @@ public class CheckoutViewModel
     [Required]
     public string LastName { get; set; } = string.Empty;
 
-    [Required]
-    public string AddressMode { get; set; } = "new";
-
     public int? SelectedAddressId { get; set; }
 
     public string? Address { get; set; }

@@ -33,6 +33,24 @@ public class OrdersController : Controller
 
         ViewBag.Addresses = addresses;
 
+        var cartJson = HttpContext.Session.GetString("Cart");
+
+        decimal total = 0m;
+
+        if (!string.IsNullOrEmpty(cartJson))
+        {
+            var cart = JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
+
+            if (cart != null && cart.Any())
+            {
+                total = cart.Sum(i => i.Product.Price * i.Quantity);
+            }
+        }
+
+        ViewBag.Total = total.ToString(
+            System.Globalization.CultureInfo.InvariantCulture
+        );
+
         return View(new CheckoutViewModel());
     }
 
@@ -77,7 +95,7 @@ public class OrdersController : Controller
         string city;
         string postalCode;
 
-        if (model.AddressMode == "saved")
+        if (model.SelectedAddressId.HasValue)
         {
             var saved = await _context.Addresses
                 .FirstOrDefaultAsync(a =>
@@ -86,7 +104,7 @@ public class OrdersController : Controller
 
             if (saved == null)
             {
-                ModelState.AddModelError("", "Nie wybrano adresu.");
+                ModelState.AddModelError("", "Nie wybrano poprawnego adresu.");
                 return View(model);
             }
 
@@ -156,6 +174,30 @@ public class OrdersController : Controller
             "Payment",
             new { orderId = order.Id }
         );
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ValidateDiscount(string code)
+    {
+        if (string.IsNullOrWhiteSpace(code))
+            return Json(new { valid = false, message = "Wpisz kod rabatowy." });
+
+        var discount = await _context.DiscountCodes
+            .FirstOrDefaultAsync(x =>
+                x.Code == code &&
+                x.IsActive &&
+                x.ExpirationDate > DateTime.Now);
+
+        if (discount == null)
+            return Json(new { valid = false, message = "Kod niepoprawny lub wygasł." });
+
+        return Json(new
+        {
+            valid = true,
+            message = $"Kod poprawny! Rabat: {discount.DiscountPercent}%",
+            percent = discount.DiscountPercent
+        });
     }
 
     public IActionResult Success(int id)
@@ -291,7 +333,7 @@ public class OrdersController : Controller
 
                     col.Item().PaddingTop(15);
 
-                    col.Item().Text($"Data wystawienia: {order.CreatedAt:yyyy-MM-dd}");
+                    col.Item().Text($"Data wystawienia: {order.CreatedAt:dd-MM-yyyy}");
 
                     col.Item().PaddingTop(15);
 
