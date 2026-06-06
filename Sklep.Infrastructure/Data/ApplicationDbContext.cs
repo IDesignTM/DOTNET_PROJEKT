@@ -26,6 +26,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<ProductQuestion> ProductQuestions => Set<ProductQuestion>();
     public DbSet<DiscountCodeUsage> DiscountCodeUsages => Set<DiscountCodeUsage>();
     public DbSet<Address> Addresses => Set<Address>();
+    public DbSet<LoginHistory> LoginHistories => Set<LoginHistory>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
