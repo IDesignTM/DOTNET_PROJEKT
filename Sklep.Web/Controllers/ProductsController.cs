@@ -94,6 +94,15 @@ public class ProductsController : Controller
         {
             isInWishlist = await context.WishlistItems
                 .AnyAsync(i => i.ProductId == id && i.Wishlist!.UserId == userId);
+
+            context.ProductViewHistories.Add(new ProductViewHistory
+            {
+                UserId = userId,
+                ProductId = id,
+                ViewedAt = DateTime.Now
+            });
+
+            await context.SaveChangesAsync();
         }
         ViewBag.IsInWishlist = isInWishlist;
 
