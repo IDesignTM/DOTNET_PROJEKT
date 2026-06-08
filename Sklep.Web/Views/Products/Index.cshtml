@@ -12,35 +12,47 @@
                 <label class="form-label small text-uppercase fw-bold">Szukaj</label>
                 <input type="text" name="searchString" value="@ViewBag.Search" class="form-control" placeholder="Nazwa produktu..." />
             </div>
-            
+
             <div class="col-md-3">
                 <label class="form-label small text-uppercase fw-bold">Rozmiar</label>
-                <select name="sizeId" class="form-select">
-                    <option value="">Wszystkie rozmiary</option>
-                    @if (ViewBag.Sizes != null)
-                    {
-                        foreach (var size in (IEnumerable<Sklep.Core.Models.Size>)ViewBag.Sizes)
+                <div class="dropdown">
+                    <button class="btn btn-outline-dark w-100 dropdown-toggle text-uppercase text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown">
+                        @(ViewBag.CurrentSizeName ?? "Wszystkie rozmiary")
+                    </button>
+                    <ul class="dropdown-menu w-100 shadow-sm">
+                        <li><a class="dropdown-item" asp-action="Index" asp-route-sizeId="" asp-route-searchString="@ViewBag.Search" asp-route-color="@ViewBag.CurrentColor">Wszystkie rozmiary</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        @if (ViewBag.Sizes != null)
                         {
-                            bool isSelected = ViewBag.CurrentSizeId == size.Id;
-                            <option value="@size.Id" id="size_@size.Id" selected="@isSelected">@size.Name</option>
+                            foreach (var size in (IEnumerable<Sklep.Core.Models.Size>)ViewBag.Sizes)
+                            {
+                                <li><a class="dropdown-item" asp-action="Index" asp-route-sizeId="@size.Id" asp-route-searchString="@ViewBag.Search" asp-route-color="@ViewBag.CurrentColor">@size.Name</a></li>
+                            }
                         }
-                    }
-                </select>
+                    </ul>
+                </div>
+                <input type="hidden" name="sizeId" value="@ViewBag.CurrentSizeId" />
             </div>
 
             <div class="col-md-3">
                 <label class="form-label small text-uppercase fw-bold">Kolor</label>
-                <select name="color" class="form-select">
-                    <option value="">Wszystkie kolory</option>
-                    @if (ViewBag.Colors != null)
-                    {
-                        foreach (var color in (IEnumerable<string>)ViewBag.Colors)
+                <div class="dropdown">
+                    <button class="btn btn-outline-dark w-100 dropdown-toggle text-uppercase text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown">
+                        @(ViewBag.CurrentColor ?? "Wszystkie kolory")
+                    </button>
+                    <ul class="dropdown-menu w-100 shadow-sm">
+                        <li><a class="dropdown-item" asp-action="Index" asp-route-color="" asp-route-searchString="@ViewBag.Search" asp-route-sizeId="@ViewBag.CurrentSizeId">Wszystkie kolory</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        @if (ViewBag.Colors != null)
                         {
-                            bool isSelected = ViewBag.CurrentColor == color;
-                            <option value="@color" selected="@isSelected">@color</option>
+                            foreach (var color in (IEnumerable<string>)ViewBag.Colors)
+                            {
+                                <li><a class="dropdown-item" asp-action="Index" asp-route-color="@color" asp-route-searchString="@ViewBag.Search" asp-route-sizeId="@ViewBag.CurrentSizeId">@color</a></li>
+                            }
                         }
-                    }
-                </select>
+                    </ul>
+                </div>
+                <input type="hidden" name="color" value="@ViewBag.CurrentColor" />
             </div>
 
             <input type="hidden" name="categoryName" value="@ViewBag.CurrentCategory" />

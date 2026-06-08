@@ -1,166 +1,163 @@
 ﻿@using Sklep.Web.Helpers
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CiuchCiuch</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Sklep.Web.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">CiuchCiuch</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+    <header class="sticky-top bg-white border-bottom global-header">
+        <nav class="navbar navbar-expand-lg navbar-light py-3">
+            <div class="container">
+
+                <a class="navbar-brand fw-bold text-uppercase tracking-wider fs-4 text-dark me-4" asp-area="" asp-controller="Home" asp-action="Index">
+                    Ciuch<span class="fw-light text-muted">Ciuch</span>
+                </a>
+
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+                    <span class="bi bi-list fs-2"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="navbar-collapse collapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Products" asp-action="Index">Sklep</a>
+                            <a class="nav-link fw-medium text-uppercase fs-7 px-3" asp-area="" asp-controller="Products" asp-action="Index">Kolekcja</a>
                         </li>
+
                         @if (User.IsInRole("Admin"))
                         {
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle text-dark"
-                                   href="#"
-                                   id="adminDropdown"
-                                   role="button"
-                                   data-bs-toggle="dropdown"
-                                   aria-expanded="false">
-                                    Panel administracji
+                            <li class="nav-item dropdown admin-zone rounded-2 ms-lg-2">
+                                <a class="nav-link dropdown-toggle fw-semibold text-danger px-3" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-shield-lock me-1"></i> Admin
                                 </a>
-
-                                <ul class="dropdown-menu shadow-sm"
-                                    aria-labelledby="adminDropdown">
-                                    <li>
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Products" asp-action="Index">
-                                            Zarządzaj produktami
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Categories" asp-action="Index">
-                                            Zarządzaj kategoriami
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="Tags" asp-action="Index">
-                                            Zarządzaj tagami
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-area="Admin" asp-controller="DiscountCodes" asp-action="Index">
-                                            Kody rabatowe
-                                        </a>
-                                    </li>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="adminDropdown">
+                                    <li><h6 class="dropdown-header">Zarządzanie sklepem</h6></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Products" asp-action="Index"><i class="bi bi-box-seam me-2"></i>Produkty</a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Categories" asp-action="Index"><i class="bi bi-tags me-2"></i>Kategorie</a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Tags" asp-action="Index"><i class="bi bi-hash me-2"></i>Tagi</a></li>
+                                    <li><a class="dropdown-item" asp-area="Admin" asp-controller="DiscountCodes" asp-action="Index"><i class="bi bi-ticket-perforated me-2"></i>Kody rabatowe</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><h6 class="dropdown-header">Klienci i Sprzedaż</h6></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Orders" asp-action="AllOrders"><i class="bi bi-receipt me-2"></i>Zamówienia</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Users" asp-action="Index"><i class="bi bi-people me-2"></i>Użytkownicy</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="ProductQuestions" asp-action="Index"><i class="bi bi-question-circle me-2"></i>Pytania</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Index"><i class="bi bi-graph-up-arrow me-2"></i>Statystyki</a></li>
                                 </ul>
-                                    
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   asp-area=""
-                                   asp-controller="Orders"
-                                   asp-action="AllOrders">
-                                    Zamówienia
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   asp-area=""
-                                   asp-controller="Users"
-                                   asp-action="Index">
-                                    Użytkownicy
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   asp-area=""
-                                   asp-controller="Admin"
-                                   asp-action="Index">
-                                    Statystyki
-                                </a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                    asp-area=""
-                                    asp-controller="ProductQuestions"
-                                    asp-action="Index">
-                                    Pytania do produktów
-                                </a>
                             </li>
                         }
                     </ul>
 
-                    <ul class="navbar-nav ms-auto align-items-center">
+                    <ul class="navbar-nav ms-auto align-items-center gap-2">
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
-                            <a class="nav-link"
-                               asp-area=""
-                               asp-controller="Orders"
-                               asp-action="MyOrders">
-                                Moje zamówienia
-                            </a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link text-dark dropdown-toggle fw-medium" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person fs-5 me-1"></i> <span>Konto</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userDropdown">
+                                    <li><span class="dropdown-item-text text-muted small">Witaj, @User.Identity.Name</span></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Orders" asp-action="MyOrders"><i class="bi bi-bag-check me-2"></i>Moje zamówienia</a></li>
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Addresses" asp-action="Index"><i class="bi bi-geo-alt me-2"></i>Moje adresy</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form method="post" asp-area="Identity" asp-page="/Account/Logout" class="m-0 p-0">
+                                            <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Wyloguj się</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+
                             <li class="nav-item">
-                                <a class="nav-link"
-                                   asp-area=""
-                                   asp-controller="Addresses"
-                                   asp-action="Index">
-                                    Moje adresy
+                                <a class="nav-link text-dark p-2" asp-area="" asp-controller="Wishlist" asp-action="Index" title="Ulubione">
+                                    <i class="bi bi-heart fs-5"></i>
                                 </a>
                             </li>
-                            <li class="nav-item me-2">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Wishlist" asp-action="Index" style="font-size: 1.2rem; line-height: 1;">
-                                    ❤️
+
+                            <li class="nav-item ms-lg-2">
+                                <a class="nav-link btn btn-cart-premium rounded-pill px-3 py-2 d-flex align-items-center gap-2" asp-area="" asp-controller="Cart" asp-action="Index">
+                                    <i class="bi bi-bag fs-6"></i>
+                                    <span class="fw-bold small">(@CartSessionHelper.GetCartCount(Context.Session))</span>
                                 </a>
-                            </li>
-                            <li class="nav-item me-3">
-                                <a class="nav-link text-dark text-nowrap" asp-area="" asp-controller="Cart" asp-action="Index" style="font-size: 1.2rem; line-height: 1;">
-                                    🛒 <span class="fs-6 fw-bold">(@CartSessionHelper.GetCartCount(Context.Session))</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <span class="nav-link text-muted">Witaj @User.Identity.Name!</span>
-                            </li>
-                            <li class="nav-item">
-                                <form method="post" asp-area="Identity" asp-page="/Account/Logout" class="m-0 p-0">
-                                    <button type="submit" class="nav-link btn btn-link text-dark border-0">Wyloguj</button>
-                                </form>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Zaloguj</a>
+                                <a class="nav-link fw-medium text-dark px-3" asp-area="Identity" asp-page="/Account/Login">Zaloguj</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Rejestracja</a>
+                                <a class="btn btn-outline-dark rounded-pill px-4 btn-sm fw-medium" asp-area="Identity" asp-page="/Account/Register">Zarejestruj się</a>
                             </li>
                         }
                     </ul>
-                    
-                </div> </div> </nav>
+                </div>
+            </div>
+        </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+    <div class="container-fluid px-md-5 my-4">
+        <main role="main" class="pb-5">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="bg-light text-dark pt-5 pb-4 mt-auto border-top">
         <div class="container">
-            &copy; 2026 - Sklep.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="fw-bold text-uppercase tracking-wider mb-3">CiuchCiuch</h5>
+                    <p class="text-muted small">Twój ulubiony butik internetowy z wyselekcjonowaną odzieżą najwyższej jakości.</p>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="fw-bold text-uppercase small mb-3">Zakupy</h6>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><a asp-controller="Products" asp-action="Index" class="text-decoration-none text-reset">Kolekcja</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-reset">Nowości</a></li>
+                        <li><a href="#" class="text-decoration-none text-reset">Wyprzedaż</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold text-uppercase small mb-3">Pomoc & Kontakt</h6>
+                    <ul class="list-unstyled text-muted small">
+                        <li class="mb-2"><a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-decoration-none text-reset">Polityka prywatności</a></li>
+                        <li class="mb-2"><a href="#" class="text-decoration-none text-reset">Zwroty i reklamacje</a></li>
+                        <li><a href="#" class="text-decoration-none text-reset">Regulamin sklepu</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold text-uppercase small mb-3">Newsletter</h6>
+                    <div class="input-group mb-3">
+                        <input type="email" class="form-control border-dark rounded-start-pill text-sm" style="font-size:0.85rem;" placeholder="Twój adres e-mail">
+                        <button class="btn btn-dark rounded-end-pill px-3 text-sm" type="button">Dołącz</button>
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4 text-muted">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center text-muted small">
+                <p class="mb-0">&copy; 2026 CiuchCiuch. Wszelkie prawa zastrzeżone.</p>
+                <div class="d-flex gap-3 fs-5 mt-2 mt-sm-0">
+                    <i class="bi bi-instagram"></i>
+                    <i class="bi bi-facebook"></i>
+                    <i class="bi bi-tiktok"></i>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

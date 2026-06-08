@@ -1,45 +1,44 @@
 ﻿@model Sklep.Core.Models.DiscountCode
 
-<h2>Edytuj kod rabatowy</h2>
+@{
+    ViewData["Title"] = "Edytuj kod rabatowy";
+}
 
-<form asp-action="Edit" method="post">
+<div class="container py-4">
+    <h2 class="mb-4 text-uppercase fw-bold" style="letter-spacing: 0.05em;">Edytuj kod rabatowy</h2>
 
-    <input asp-for="Id" type="hidden" />
+    <div class="card border-0 shadow-sm bg-white p-4" style="max-width: 500px;">
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
 
-    <div class="mb-3">
-        <label>Kod</label>
-        <input asp-for="Code" class="form-control" />
+            <div class="mb-4">
+                <label asp-for="Code" class="form-label fw-bold small text-uppercase">Kod</label>
+                <input asp-for="Code" class="form-control" />
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="DiscountPercent" class="form-label fw-bold small text-uppercase">Rabat (%)</label>
+                <input asp-for="DiscountPercent" class="form-control" />
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="ExpirationDate" class="form-label fw-bold small text-uppercase">Data ważności</label>
+                <input asp-for="ExpirationDate" type="date" class="form-control" />
+            </div>
+
+            <div class="mb-4 form-check">
+                <input asp-for="IsActive" class="form-check-input" />
+                <label asp-for="IsActive" class="form-check-label fw-bold small text-uppercase">Aktywny</label>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-dark text-uppercase px-4" style="letter-spacing: 0.05em;">Zapisz zmiany</button>
+                <a asp-action="Index" class="btn btn-outline-secondary text-uppercase px-4" style="letter-spacing: 0.05em;">Anuluj</a>
+            </div>
+        </form>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label>Rabat (%)</label>
-        <input asp-for="DiscountPercent" class="form-control" />
-    </div>
-
-    <div class="mb-3">
-        <label>Data ważności</label>
-        <input asp-for="ExpirationDate"
-               type="date"
-               class="form-control" />
-    </div>
-
-    <div class="form-check mb-3">
-        <input asp-for="IsActive"
-               class="form-check-input" />
-
-        <label asp-for="IsActive"
-               class="form-check-label">
-            Aktywny
-        </label>
-    </div>
-
-    <button type="submit" class="btn btn-success">
-        Zapisz zmiany
-    </button>
-
-    <a asp-action="Index"
-       class="btn btn-secondary">
-        Anuluj
-    </a>
-
-</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Sklep.Core.Interfaces;
 using Sklep.Web.Models;
 
 namespace Sklep.Web.Controllers;
@@ -7,15 +8,20 @@ namespace Sklep.Web.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly IProductRepository _productRepository;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, IProductRepository productRepository)
     {
         _logger = logger;
+        _productRepository = productRepository;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        // U¿ywamy metody, która na 100% dzia³a i pobiera Twoje produkty
+        var products = await _productRepository.GetAllWithCategoryAsync();
+
+        return View(products);
     }
 
     public IActionResult Privacy()

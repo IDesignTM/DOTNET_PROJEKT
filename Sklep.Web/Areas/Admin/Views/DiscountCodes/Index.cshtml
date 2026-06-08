@@ -4,61 +4,60 @@
     ViewData["Title"] = "Kody rabatowe";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Kody rabatowe</h2>
-    <a asp-action="Create" class="btn btn-primary">Dodaj kod</a>
-</div>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-uppercase fw-bold text-dark mb-0" style="letter-spacing: 0.05em;">Kody rabatowe</h2>
+        <a asp-action="Create" class="btn btn-dark text-uppercase px-4" style="font-size: 0.85rem; letter-spacing: 0.05em;">Dodaj kod</a>
+    </div>
 
-<table class="table table-striped align-middle">
-    <thead>
-        <tr>
-            <th>Kod</th>
-            <th>Rabat</th>
-            <th>Aktywny</th>
-            <th>Ważny do</th>
-            <th class="text-end">Akcje</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Code</td>
-
-                <td>
-                    @item.DiscountPercent %
-                </td>
-
-                <td>
-                    @if (item.IsActive)
+    <div class="card border-0 shadow-sm bg-white">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-uppercase small fw-bold" style="letter-spacing: 0.05em;">
+                    <tr>
+                        <th class="ps-4 py-3">Kod</th>
+                        <th class="py-3">Rabat</th>
+                        <th class="py-3">Aktywny</th>
+                        <th class="py-3">Ważny do</th>
+                        <th class="text-end pe-4 py-3">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
                     {
-                        <span class="badge bg-success">Tak</span>
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted small">Brak kodów rabatowych w bazie danych.</td>
+                        </tr>
                     }
                     else
                     {
-                        <span class="badge bg-danger">Nie</span>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-bold">@item.Code</td>
+                                <td>@item.DiscountPercent %</td>
+                                <td>
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Tak</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Nie</span>
+                                    }
+                                </td>
+                                <td>@item.ExpirationDate.ToString("dd-MM-yyyy")</td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-dark text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Edytuj</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Usuń</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
                     }
-                </td>
-
-                <td>
-                    @item.ExpirationDate.ToString("yyyy-MM-dd")
-                </td>
-
-                <td class="text-end">
-                    <a asp-action="Edit"
-                       asp-route-id="@item.Id"
-                       class="btn btn-sm btn-warning">
-                        Edytuj
-                    </a>
-
-                    <a asp-action="Delete"
-                       asp-route-id="@item.Id"
-                       class="btn btn-sm btn-danger">
-                        Usuń
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

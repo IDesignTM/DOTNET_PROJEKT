@@ -1,7 +1,73 @@
-﻿@{
-    ViewData["Title"] = "Strona główna";
+﻿@model IEnumerable<Sklep.Core.Models.Product>
+
+@{
+    ViewData["Title"] = "Sklep Streetwear";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Strona główna</h1>
+<div class="container-fluid px-4 mb-5">
+    <div class="sizeer-hero-clean p-5 rounded-4 shadow-sm d-flex align-items-center position-relative overflow-hidden">
+        <div class="hero-image-overlay" style="background-image: url('https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=1600&auto=format&fit=crop');"></div>
+        <div class="hero-fade-layer"></div>
+
+        <div class="position-relative py-4 text-white text-uppercase w-100 content-layer">
+            <span class="badge bg-warning text-dark fw-bold px-3 py-2 mb-3 tracking-wider rounded-0" style="letter-spacing: 2px !important;">Kolekcja 2026</span>
+            <h1 class="display-3 fw-black tracking-tight lh-1 mb-3 text-white" style="font-weight: 900 !important; letter-spacing: -1px !important;">COOL<br>STREET<br>ENERGY</h1>
+            <p class="text-white-50 normal-case lead mb-4" style="max-width: 500px; text-transform: none !important;">
+                Uzupełnij swoją szafę o najświeższe dropy. Ponadczasowy komfort, uniwersalne kroje i styl, który definiujesz Ty.
+            </p>
+            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-light px-5 py-3 fw-bold text-uppercase tracking-wider rounded-0 border-2" style="letter-spacing: 2px !important;">
+                Sprawdź produkty <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container px-4 mb-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <h3 class="text-uppercase mb-0" style="letter-spacing: 0.1em; font-size: calc(1.3rem + .6vw); font-weight: 500;">Ostatnie Nowości</h3>
+        <a asp-controller="Products" asp-action="Index" class="text-dark fw-bold text-uppercase tracking-wide text-decoration-none border-bottom border-2 border-dark pb-1" style="font-size: 0.85rem;">
+            Zobacz wszystko
+        </a>
+    </div>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var item in Model.Take(4))
+            {
+                <div class="col">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-img-top d-flex align-items-center justify-content-center bg-light rounded-top" style="height: 350px; overflow: hidden;">
+                            @if (item.Images != null && item.Images.Any())
+                            {
+                                <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="d-block w-100 h-100">
+                                    <img src="@item.Images.First().ImagePath" alt="@item.Name" style="width: 100%; height: 100%; object-fit: cover;" />
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="text-muted small text-uppercase" style="letter-spacing: 0.1em;">NO IMAGE</span>
+                            }
+                        </div>
+                        <div class="card-body text-center bg-white rounded-bottom">
+                            <h5 class="card-title mb-2" style="font-size: 1rem;">
+                                <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id" class="text-dark text-decoration-none fw-bold text-uppercase" style="letter-spacing: 0.05em;">
+                                    @item.Name
+                                </a>
+                            </h5>
+                            <span class="product-price text-muted" style="font-size: 0.95rem;">
+                                @item.Price.ToString("C")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <p class="text-muted fs-5">Brak produktów do wyświetlenia w tej chwili.</p>
+            </div>
+        }
+    </div>
 </div>

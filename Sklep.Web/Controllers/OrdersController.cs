@@ -358,9 +358,11 @@ public class OrdersController : Controller
                 {
                     col.Item().PaddingTop(20);
 
-                    col.Item().Text("SKLEP ODZIEŻOWY")
-                        .Bold()
-                        .FontSize(16);
+                    col.Item().Row(row =>
+                    {
+                        row.AutoItem().Text("CIUCH").Bold().FontSize(18).FontColor(Colors.Black);
+                        row.AutoItem().Text("CIUCH").Light().FontSize(18).FontColor(Colors.Grey.Medium);
+                    });
 
                     col.Item().Text("ul. Wiejska 1");
                     col.Item().Text("15-351 Białystok");
