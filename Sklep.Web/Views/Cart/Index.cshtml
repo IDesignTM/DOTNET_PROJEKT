@@ -1,4 +1,4 @@
-﻿@model List<Sklep.Core.Models.Product>
+﻿@model List<Sklep.Core.Models.CartItem>
 
 <h2>Koszyk</h2>
 
@@ -14,25 +14,42 @@ else
         <thead>
             <tr>
                 <th>Produkt</th>
-                <th>Cena</th>
-                <th></th>
+                <th>Cena za sztukę</th>
+                <th>Ilość</th>
+                <th>Wartość</th>
             </tr>
         </thead>
 
         <tbody>
             @foreach (var item in Model)
             {
-                total += item.Price;
+                total += item.Product.Price * item.Quantity;
 
                 <tr>
-                    <td>@item.Name</td>
-                    <td>@item.Price zł</td>
+                    <td>@item.Product.Name</td>
+
+                    <td>@item.Product.Price zł</td>
+
                     <td>
-                        <a class="btn btn-danger"
-                           asp-action="Remove"
-                           asp-route-id="@item.Id">
-                            Usuń
+                        <a class="btn btn-warning btn-sm"
+                           asp-action="Decrease"
+                           asp-route-id="@item.Product.Id">
+                            -
                         </a>
+
+                        <span class="mx-2">
+                            @item.Quantity
+                        </span>
+
+                        <a class="btn btn-success btn-sm"
+                           asp-action="Increase"
+                           asp-route-id="@item.Product.Id">
+                            +
+                        </a>
+                    </td>
+
+                    <td>
+                        @((item.Product.Price * item.Quantity).ToString("0.00")) zł
                     </td>
                 </tr>
             }

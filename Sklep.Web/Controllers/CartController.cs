@@ -18,16 +18,17 @@ namespace Sklep.Web.Controllers
         {
             var cart = HttpContext.Session.GetString("Cart");
 
-            List<Product> products = new();
+            List<CartItem> cartItems = new();
 
             if (cart != null)
             {
-                products = JsonConvert.DeserializeObject<List<Product>>(cart);
+                cartItems = JsonConvert.DeserializeObject<List<CartItem>>(cart);
             }
 
-            return View(products);
+            return View(cartItems);
         }
 
+        [HttpPost]
         public async Task<IActionResult> AddToCart(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
@@ -35,45 +36,91 @@ namespace Sklep.Web.Controllers
             if (product == null)
                 return NotFound();
 
-            var cart = HttpContext.Session.GetString("Cart");
+            var cartJson = HttpContext.Session.GetString("Cart");
 
-            List<Product> products = new();
+            List<CartItem> cartItems = new();
 
-            if (cart != null)
+            if (!string.IsNullOrEmpty(cartJson))
             {
-                products = JsonConvert.DeserializeObject<List<Product>>(cart);
+                cartItems = JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
             }
 
-            products.Add(product);
+            var existingItem =
+                cartItems.FirstOrDefault(x => x.Product.Id == id);
+
+            if (existingItem != null)
+            {
+                existingItem.Quantity++;
+            }
+            else
+            {
+                cartItems.Add(new CartItem
+                {
+                    Product = product,
+                    Quantity = 1
+                });
+            }
 
             HttpContext.Session.SetString(
                 "Cart",
-                JsonConvert.SerializeObject(products));
+                JsonConvert.SerializeObject(cartItems));
 
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Remove(int id)
+        public IActionResult Increase(int id)
         {
-            var cart = HttpContext.Session.GetString("Cart");
+            var cartJson = HttpContext.Session.GetString("Cart");
 
-            if (cart != null)
+            if (cartJson == null)
+                return RedirectToAction(nameof(Index));
+
+            var cartItems =
+                JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
+
+            var item =
+                cartItems.FirstOrDefault(x => x.Product.Id == id);
+
+            if (item != null)
             {
-                var products = JsonConvert.DeserializeObject<List<Product>>(cart);
-
-                var product = products.FirstOrDefault(p => p.Id == id);
-
-                if (product != null)
-                {
-                    products.Remove(product);
-                }
-
-                HttpContext.Session.SetString(
-                    "Cart",
-                    JsonConvert.SerializeObject(products));
+                item.Quantity++;
             }
 
-            return RedirectToAction("Index");
+            HttpContext.Session.SetString(
+                "Cart",
+                JsonConvert.SerializeObject(cartItems));
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Decrease(int id)
+        {
+            var cartJson = HttpContext.Session.GetString("Cart");
+
+            if (cartJson == null)
+                return RedirectToAction(nameof(Index));
+
+            var cartItems =
+                JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
+
+            var item =
+                cartItems.FirstOrDefault(x => x.Product.Id == id);
+
+            if (item != null)
+            {
+                item.Quantity--;
+
+                if (item.Quantity <= 0)
+                {
+                    cartItems.Remove(item);
+                }
+            }
+
+            HttpContext.Session.SetString(
+                "Cart",
+                JsonConvert.SerializeObject(cartItems));
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -1,0 +1,45 @@
+﻿@model Sklep.Core.Models.DiscountCode
+
+<h2>Edytuj kod rabatowy</h2>
+
+<form asp-action="Edit" method="post">
+
+    <input asp-for="Id" type="hidden" />
+
+    <div class="mb-3">
+        <label>Kod</label>
+        <input asp-for="Code" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Rabat (%)</label>
+        <input asp-for="DiscountPercent" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Data ważności</label>
+        <input asp-for="ExpirationDate"
+               type="date"
+               class="form-control" />
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsActive"
+               class="form-check-input" />
+
+        <label asp-for="IsActive"
+               class="form-check-label">
+            Aktywny
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Zapisz zmiany
+    </button>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Anuluj
+    </a>
+
+</form>

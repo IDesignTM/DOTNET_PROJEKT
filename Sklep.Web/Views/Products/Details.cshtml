@@ -97,6 +97,7 @@
                         <label class="form-label small text-uppercase fw-bold" style="letter-spacing: 0.05em;">Dostępne warianty</label>
                         
                         <form asp-controller="Cart" asp-action="AddToCart" method="post" class="w-100 m-0 p-0">
+                            <input type="hidden" name="id" value="@Model.Id" />
                             @if (isAvailable)
                             {
                                 <select name="selectedVariantId" class="form-select form-select-md mb-4" style="border-radius: 4px;">
@@ -107,7 +108,7 @@
                                         </option>
                                     }
                                 </select>
-                                
+
                                 <div class="d-grid gap-3 w-100 mb-5">
                                     <button type="submit" class="btn btn-outline-dark btn-lg shadow-sm" style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; border-width: 2px;">
                                         Dodaj do koszyka
@@ -119,7 +120,7 @@
                                 <div class="alert alert-danger small text-uppercase py-2 mb-4" style="letter-spacing: 0.05em;">
                                     Produkt całkowicie wyprzedany
                                 </div>
-                                
+
                                 <div class="d-grid gap-3 w-100 mb-5">
                                     <button type="button" disabled class="btn btn-secondary btn-lg shadow-sm" style="text-transform: uppercase; font-size: 0.9rem; letter-spacing: 0.1em; opacity: 0.6;">
                                         Wyprzedane
@@ -243,6 +244,35 @@
                                </div>
                            }
                     </div>
+                    <h4>Pytania użytkowników</h4>
+
+                    @foreach (var q in Model.ProductQuestions)
+                    {
+                        <div class="border p-2 mb-2">
+                            <strong>@q.Question</strong><br />
+
+                            @if (!string.IsNullOrEmpty(q.Answer))
+                            {
+                                <span class="text-success">@q.Answer</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Brak odpowiedzi</span>
+                            }
+                        </div>
+                    }
+                    <form asp-controller="ProductQuestions" asp-action="Add" method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="productId" value="@Model.Id" />
+
+                        <textarea name="question" class="form-control"></textarea>
+
+                        <button class="btn btn-primary mt-2">
+                            Zadaj pytanie
+                        </button>
+                    </form>
                     <div class="flex-grow-1"></div>
                 </div>
             </div>

@@ -6,6 +6,9 @@ using Sklep.Core.Models;
 using Sklep.Infrastructure.Data;
 using Sklep.Web.ViewModels;
 using System.Security.Claims;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace Sklep.Web.Controllers;
 
@@ -20,9 +23,41 @@ public class OrdersController : Controller
     }
 
     [HttpGet]
-    public IActionResult Checkout()
+    public async Task<IActionResult> Checkout()
     {
-        return View();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var addresses = await _context.Addresses
+            .Where(a => a.UserId == userId)
+            .ToListAsync();
+
+        ViewBag.Addresses = addresses;
+
+        var cartJson = HttpContext.Session.GetString("Cart");
+
+        decimal total = 0m;
+
+        if (!string.IsNullOrEmpty(cartJson))
+        {
+            var cart = JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
+
+            if (cart != null && cart.Any())
+            {
+                total = cart.Sum(i => i.Product.Price * i.Quantity);
+            }
+        }
+
+        ViewBag.Total = total.ToString(
+            System.Globalization.CultureInfo.InvariantCulture
+        );
+
+        var shippingMethods = await _context.ShippingMethods
+            .Where(x => x.IsActive)
+            .ToListAsync();
+
+        ViewBag.ShippingMethods = shippingMethods;
+
+        return View(new CheckoutViewModel());
     }
 
     [HttpPost]
@@ -37,41 +72,169 @@ public class OrdersController : Controller
         if (string.IsNullOrEmpty(cartJson))
             return RedirectToAction("Index", "Cart");
 
-        var cart = JsonConvert.DeserializeObject<List<Product>>(cartJson);
+        var cart = JsonConvert.DeserializeObject<List<CartItem>>(cartJson);
 
         if (cart == null || !cart.Any())
             return RedirectToAction("Index", "Cart");
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
+        decimal productsTotal = cart.Sum(i => i.Product.Price * i.Quantity);
+
+        decimal shippingCost = 0;
+        string? shippingName = null;
+
+        if (model.ShippingMethodId.HasValue)
+        {
+            var shipping = await _context.ShippingMethods
+                .FirstOrDefaultAsync(x => x.Id == model.ShippingMethodId);
+
+            if (shipping != null)
+            {
+                shippingCost = shipping.Price;
+                shippingName = shipping.Name;
+            }
+        }
+        else
+        {
+            shippingName = "Odbiór osobisty";
+        }
+
+        decimal discountAmount = 0;
+        string? discountCode = null;
+        DiscountCode? discount = null;
+
+        if (!string.IsNullOrWhiteSpace(model.DiscountCode))
+        {
+            discount = await _context.DiscountCodes
+                .FirstOrDefaultAsync(x =>
+                    x.Code == model.DiscountCode &&
+                    x.IsActive &&
+                    x.ExpirationDate > DateTime.Now);
+
+            if (discount != null)
+            {
+                discountAmount = productsTotal * (discount.DiscountPercent / 100);
+                discountCode = discount.Code;
+            }
+        }
+
+        decimal total = (productsTotal - discountAmount) + shippingCost;
+
+        string address;
+        string city;
+        string postalCode;
+
+        if (model.SelectedAddressId.HasValue)
+        {
+            var saved = await _context.Addresses
+                .FirstOrDefaultAsync(a =>
+                    a.Id == model.SelectedAddressId &&
+                    a.UserId == userId);
+
+            if (saved == null)
+            {
+                ModelState.AddModelError("", "Nie wybrano poprawnego adresu.");
+                return View(model);
+            }
+
+            address = saved.Street;
+            city = saved.City;
+            postalCode = saved.PostalCode;
+        }
+        else
+        {
+            address = model.Address!;
+            city = model.City!;
+            postalCode = model.PostalCode!;
+        }
+
         var order = new Order
         {
             UserId = userId!,
             FirstName = model.FirstName,
             LastName = model.LastName,
-            Address = model.Address,
-            City = model.City,
-            PostalCode = model.PostalCode,
-            TotalPrice = cart.Sum(p => p.Price)
+            Address = address,
+            City = city,
+            PostalCode = postalCode,
+            TotalPrice = total,
+
+            ShippingMethodId = model.ShippingMethodId,
+            ShippingMethodName = shippingName,
+            ShippingPrice = shippingCost,
+
+            DiscountAmount = discountAmount,
+            DiscountCode = discountCode
         };
 
-        foreach (var product in cart)
+        foreach (var item in cart)
         {
             order.Items.Add(new OrderItem
             {
-                ProductId = product.Id,
-                Quantity = 1,
-                UnitPrice = product.Price
+                ProductId = item.Product.Id,
+                Quantity = item.Quantity,
+                UnitPrice = item.Product.Price
             });
         }
 
         _context.Orders.Add(order);
-
         await _context.SaveChangesAsync();
+
+        var payment = new Payment
+        {
+            OrderId = order.Id,
+            Amount = order.TotalPrice,
+            Method = "Płatność online",
+            Status = "Oczekująca"
+        };
+
+        _context.Payments.Add(payment);
+        await _context.SaveChangesAsync();
+
+        if (discount != null)
+        {
+            var usage = new DiscountCodeUsage
+            {
+                DiscountCodeId = discount.Id,
+                OrderId = order.Id,
+                UserId = userId!
+            };
+
+            _context.DiscountCodeUsages.Add(usage);
+            await _context.SaveChangesAsync();
+        }
 
         HttpContext.Session.Remove("Cart");
 
-        return RedirectToAction("Success", new { id = order.Id });
+        return RedirectToAction(
+            "Pay",
+            "Payment",
+            new { orderId = order.Id }
+        );
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ValidateDiscount(string code)
+    {
+        if (string.IsNullOrWhiteSpace(code))
+            return Json(new { valid = false, message = "Wpisz kod rabatowy." });
+
+        var discount = await _context.DiscountCodes
+            .FirstOrDefaultAsync(x =>
+                x.Code == code &&
+                x.IsActive &&
+                x.ExpirationDate > DateTime.Now);
+
+        if (discount == null)
+            return Json(new { valid = false, message = "Kod niepoprawny lub wygasł." });
+
+        return Json(new
+        {
+            valid = true,
+            message = $"Kod poprawny! Rabat: {discount.DiscountPercent}%",
+            percent = discount.DiscountPercent
+        });
     }
 
     public IActionResult Success(int id)
@@ -97,7 +260,8 @@ public class OrdersController : Controller
 
         var order = await _context.Orders
             .Include(o => o.Items)
-            .ThenInclude(i => i.Product)
+                .ThenInclude(i => i.Product)
+            .Include(o => o.Payment)
             .FirstOrDefaultAsync(o =>
                 o.Id == id &&
                 o.UserId == userId);
@@ -159,6 +323,149 @@ public class OrdersController : Controller
             return NotFound();
 
         return View(order);
+    }
+
+    public async Task<IActionResult> GeneratePdf(int id)
+    {
+        var order = await _context.Orders
+            .Include(o => o.Items)
+            .ThenInclude(i => i.Product)
+            .FirstOrDefaultAsync(o => o.Id == id);
+
+        if (order == null)
+            return NotFound();
+
+        if (!User.IsInRole("Admin"))
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (order.UserId != userId)
+                return Forbid();
+        }
+
+        var pdf = Document.Create(container =>
+        {
+            container.Page(page =>
+            {
+                page.Margin(30);
+
+                page.Header().Text($"FAKTURA nr FV/{DateTime.Now.Year}/{order.Id}")
+                    .FontSize(22)
+                    .Bold()
+                    .AlignCenter();
+
+                page.Content().Column(col =>
+                {
+                    col.Item().PaddingTop(20);
+
+                    col.Item().Text("SKLEP ODZIEŻOWY")
+                        .Bold()
+                        .FontSize(16);
+
+                    col.Item().Text("ul. Wiejska 1");
+                    col.Item().Text("15-351 Białystok");
+                    col.Item().Text("NIP: 8239401642");
+                    col.Item().Text("tel. 764 329 443");
+                    col.Item().Text("e-mail: sklep@wp.pl");
+
+                    col.Item().PaddingTop(15);
+
+                    col.Item().Text($"Data wystawienia: {order.CreatedAt:dd-MM-yyyy}");
+
+                    col.Item().PaddingTop(15);
+
+                    col.Item().Text("NABYWCA").Bold();
+
+                    col.Item().Text($"{order.FirstName} {order.LastName}");
+                    col.Item().Text(order.Address);
+                    col.Item().Text($"{order.PostalCode} {order.City}");
+
+                    col.Item().PaddingTop(20);
+
+                    col.Item().Table(table =>
+                    {
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn(4);
+                            columns.RelativeColumn(1);
+                            columns.RelativeColumn(2);
+                            columns.RelativeColumn(2);
+                        });
+
+                        table.Header(header =>
+                        {
+                            header.Cell().Border(1).Padding(5).Text("Produkt").Bold();
+                            header.Cell().Border(1).Padding(5).Text("Ilość").Bold();
+                            header.Cell().Border(1).Padding(5).Text("Cena/szt.").Bold();
+                            header.Cell().Border(1).Padding(5).Text("Wartość").Bold();
+                        });
+
+                        decimal productsTotal = 0;
+
+                        foreach (var item in order.Items)
+                        {
+                            var value = item.UnitPrice * item.Quantity;
+                            productsTotal += value;
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text(item.Product.Name);
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text(item.Quantity.ToString());
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text(item.UnitPrice.ToString("C"));
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text(value.ToString("C"));
+                        }
+
+                        if (order.ShippingPrice > 0)
+                        {
+                            table.Cell().Border(1).Padding(5)
+                                .Text($"Dostawa ({order.ShippingMethodName ?? "wysyłka"})");
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text("1");
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text(order.ShippingPrice.ToString("C"));
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text(order.ShippingPrice.ToString("C"));
+                        }
+
+                        if (order.DiscountAmount > 0)
+                        {
+                            table.Cell().Border(1).Padding(5)
+                                .Text($"Rabat {order.DiscountCode ?? ""}");
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text("-");
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text("-");
+
+                            table.Cell().Border(1).Padding(5)
+                                .Text($"- {order.DiscountAmount:C}");
+                        }
+
+                    });
+
+                    col.Item().PaddingTop(20);
+
+                    col.Item()
+                        .AlignRight()
+                        .Text($"Razem do zapłaty: {order.TotalPrice:C}")
+                        .Bold()
+                        .FontSize(16);
+                });
+            });
+        });
+
+        var bytes = pdf.GeneratePdf();
+
+        return File(bytes, "application/pdf", $"Faktura_{order.Id}.pdf");
     }
 
 }

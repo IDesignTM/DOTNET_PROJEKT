@@ -1,3 +1,4 @@
+using System.Reflection.Emit;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Sklep.Core.Models;
@@ -20,6 +21,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
     public DbSet<Size> Sizes => Set<Size>();
     public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
+    public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<DiscountCode> DiscountCodes => Set<DiscountCode>();
+    public DbSet<ProductQuestion> ProductQuestions => Set<ProductQuestion>();
+    public DbSet<DiscountCodeUsage> DiscountCodeUsages => Set<DiscountCodeUsage>();
+    public DbSet<Address> Addresses => Set<Address>();
+    public DbSet<LoginHistory> LoginHistories => Set<LoginHistory>();
+    public DbSet<ProductViewHistory> ProductViewHistories => Set<ProductViewHistory>();
+    public DbSet<ShippingMethod> ShippingMethods => Set<ShippingMethod>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -60,6 +69,24 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             new Size { Id = 4, Name = "L" },
             new Size { Id = 5, Name = "XL" },
             new Size { Id = 6, Name = "One size" }
+        );
+
+        builder.Entity<Order>()
+            .HasOne(o => o.Payment)
+            .WithOne(p => p.Order)
+            .HasForeignKey<Payment>(p => p.OrderId
+        );
+
+        builder.Entity<Address>()
+            .HasOne(a => a.User)
+            .WithMany(u => u.Addresses)
+            .HasForeignKey(a => a.UserId
+        );
+
+        builder.Entity<ShippingMethod>().HasData(
+            new ShippingMethod { Id = 1, Name = "Kurier DHL", Price = 15, IsActive = true },
+            new ShippingMethod { Id = 2, Name = "Paczkomat", Price = 10, IsActive = true },
+            new ShippingMethod { Id = 3, Name = "Odbiór osobisty", Price = 0, IsActive = true }
         );
     }
 }

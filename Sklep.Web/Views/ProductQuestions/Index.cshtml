@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Sklep.Core.Models.ProductQuestion>
+
+<h2>Pytania użytkowników</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Produkt</th>
+            <th>Pytanie</th>
+            <th>Odpowiedź</th>
+            <th>Akcja</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Product.Name</td>
+                <td>@item.Question</td>
+                <td>@item.Answer</td>
+
+                <td>
+                    <form asp-controller="ProductQuestions"
+                          asp-action="Answer"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="id" value="@item.Id" />
+
+                        <input type="text" name="answer" class="form-control" />
+
+                        <button class="btn btn-success btn-sm mt-1">
+                            Odpowiedz
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

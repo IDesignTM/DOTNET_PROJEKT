@@ -1,0 +1,29 @@
+﻿@model Sklep.Core.Models.Address
+
+<h2>Dodaj adres</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label>Ulica</label>
+        <input asp-for="Street" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Miasto</label>
+        <input asp-for="City" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Kod pocztowy</label>
+        <input asp-for="PostalCode" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Zapisz
+    </button>
+
+</form>

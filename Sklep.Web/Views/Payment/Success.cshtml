@@ -1,0 +1,19 @@
+﻿@model int
+
+<h2>Płatność zakończona</h2>
+
+<p>
+    Dziękujemy. Płatność została zaksięgowana.
+</p>
+
+<p>
+    Numer zamówienia:
+    <strong>#@Model</strong>
+</p>
+
+<a asp-controller="Orders"
+   asp-action="Details"
+   asp-route-id="@Model"
+   class="btn btn-primary">
+    Zobacz zamówienie
+</a>

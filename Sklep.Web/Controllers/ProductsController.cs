@@ -77,9 +77,9 @@ public class ProductsController : Controller
             .Include(p => p.Images)
             .Include(p => p.Tags)
             .Include(p => p.Reviews)
-            .ThenInclude(r => r.User)
             .Include(p => p.Variants)
-            .ThenInclude(v => v.Size)
+                .ThenInclude(v => v.Size)
+            .Include(p => p.ProductQuestions)
             .FirstOrDefaultAsync(p => p.Id == id);
 
         if (product == null) return NotFound();
@@ -94,6 +94,15 @@ public class ProductsController : Controller
         {
             isInWishlist = await context.WishlistItems
                 .AnyAsync(i => i.ProductId == id && i.Wishlist!.UserId == userId);
+
+            context.ProductViewHistories.Add(new ProductViewHistory
+            {
+                UserId = userId,
+                ProductId = id,
+                ViewedAt = DateTime.Now
+            });
+
+            await context.SaveChangesAsync();
         }
         ViewBag.IsInWishlist = isInWishlist;
 
@@ -140,6 +149,30 @@ public class ProductsController : Controller
         }
 
         context.Reviews.Remove(review);
+        await context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Details), new { id = productId });
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddQuestion(int productId, string question, [FromServices] ApplicationDbContext context)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (string.IsNullOrWhiteSpace(question))
+            return RedirectToAction(nameof(Details), new { id = productId });
+
+        var q = new ProductQuestion
+        {
+            ProductId = productId,
+            UserId = userId!,
+            Question = question,
+            CreatedAt = DateTime.Now
+        };
+
+        context.ProductQuestions.Add(q);
         await context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Details), new { id = productId });

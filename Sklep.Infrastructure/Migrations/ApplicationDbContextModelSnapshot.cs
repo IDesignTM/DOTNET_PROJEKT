@@ -160,6 +160,42 @@ namespace Sklep.Infrastructure.Migrations
                     b.ToTable("ProductTag");
                 });
 
+            modelBuilder.Entity("Sklep.Core.Models.Address", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Addresses");
+                });
+
             modelBuilder.Entity("Sklep.Core.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -268,6 +304,80 @@ namespace Sklep.Infrastructure.Migrations
                     b.ToTable("CurrencyExchangeRates");
                 });
 
+            modelBuilder.Entity("Sklep.Core.Models.DiscountCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DiscountPercent")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DiscountCodes");
+                });
+
+            modelBuilder.Entity("Sklep.Core.Models.DiscountCodeUsage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("DiscountCodeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UsedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DiscountCodeId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("DiscountCodeUsages");
+                });
+
+            modelBuilder.Entity("Sklep.Core.Models.LoginHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LoginTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("Success")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LoginHistories");
+                });
+
             modelBuilder.Entity("Sklep.Core.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -285,6 +395,13 @@ namespace Sklep.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("DiscountAmount")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DiscountCode")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -294,6 +411,16 @@ namespace Sklep.Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ShippingMethodId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ShippingMethodName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ShippingPrice")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -340,6 +467,41 @@ namespace Sklep.Infrastructure.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("Sklep.Core.Models.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Amount")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("PaidAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Sklep.Core.Models.Product", b =>
@@ -398,6 +560,36 @@ namespace Sklep.Infrastructure.Migrations
                     b.ToTable("ProductImages");
                 });
 
+            modelBuilder.Entity("Sklep.Core.Models.ProductQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Answer")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductQuestions");
+                });
+
             modelBuilder.Entity("Sklep.Core.Models.ProductVariant", b =>
                 {
                     b.Property<int>("Id")
@@ -428,6 +620,29 @@ namespace Sklep.Infrastructure.Migrations
                     b.HasIndex("SizeId");
 
                     b.ToTable("ProductVariants");
+                });
+
+            modelBuilder.Entity("Sklep.Core.Models.ProductViewHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ViewedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductViewHistories");
                 });
 
             modelBuilder.Entity("Sklep.Core.Models.Review", b =>
@@ -463,6 +678,51 @@ namespace Sklep.Infrastructure.Migrations
                     b.ToTable("Reviews");
                 });
 
+            modelBuilder.Entity("Sklep.Core.Models.ShippingMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Price")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ShippingMethods");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsActive = true,
+                            Name = "Kurier DHL",
+                            Price = "15"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsActive = true,
+                            Name = "Paczkomat",
+                            Price = "10"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsActive = true,
+                            Name = "Odbiór osobisty",
+                            Price = "0"
+                        });
+                });
+
             modelBuilder.Entity("Sklep.Core.Models.Size", b =>
                 {
                     b.Property<int>("Id")
@@ -485,37 +745,37 @@ namespace Sklep.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 6, 1, 21, 52, 4, 718, DateTimeKind.Utc).AddTicks(7980),
+                            CreatedAt = new DateTime(2026, 6, 8, 11, 56, 31, 359, DateTimeKind.Utc).AddTicks(7620),
                             Name = "XS"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 6, 1, 21, 52, 4, 718, DateTimeKind.Utc).AddTicks(7980),
+                            CreatedAt = new DateTime(2026, 6, 8, 11, 56, 31, 359, DateTimeKind.Utc).AddTicks(7620),
                             Name = "S"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 6, 1, 21, 52, 4, 718, DateTimeKind.Utc).AddTicks(7980),
+                            CreatedAt = new DateTime(2026, 6, 8, 11, 56, 31, 359, DateTimeKind.Utc).AddTicks(7620),
                             Name = "M"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2026, 6, 1, 21, 52, 4, 718, DateTimeKind.Utc).AddTicks(7980),
+                            CreatedAt = new DateTime(2026, 6, 8, 11, 56, 31, 359, DateTimeKind.Utc).AddTicks(7620),
                             Name = "L"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedAt = new DateTime(2026, 6, 1, 21, 52, 4, 718, DateTimeKind.Utc).AddTicks(7980),
+                            CreatedAt = new DateTime(2026, 6, 8, 11, 56, 31, 359, DateTimeKind.Utc).AddTicks(7620),
                             Name = "XL"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedAt = new DateTime(2026, 6, 1, 21, 52, 4, 718, DateTimeKind.Utc).AddTicks(7980),
+                            CreatedAt = new DateTime(2026, 6, 8, 11, 56, 31, 359, DateTimeKind.Utc).AddTicks(7620),
                             Name = "One size"
                         });
                 });
@@ -542,19 +802,19 @@ namespace Sklep.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2026, 6, 1, 21, 52, 4, 718, DateTimeKind.Utc).AddTicks(7470),
+                            CreatedAt = new DateTime(2026, 6, 8, 11, 56, 31, 359, DateTimeKind.Utc).AddTicks(7170),
                             Name = "Nowość"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2026, 6, 1, 21, 52, 4, 718, DateTimeKind.Utc).AddTicks(7480),
+                            CreatedAt = new DateTime(2026, 6, 8, 11, 56, 31, 359, DateTimeKind.Utc).AddTicks(7180),
                             Name = "Bestseller"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2026, 6, 1, 21, 52, 4, 718, DateTimeKind.Utc).AddTicks(7480),
+                            CreatedAt = new DateTime(2026, 6, 8, 11, 56, 31, 359, DateTimeKind.Utc).AddTicks(7180),
                             Name = "Wyprzedaż"
                         });
                 });
@@ -670,6 +930,36 @@ namespace Sklep.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Sklep.Core.Models.Address", b =>
+                {
+                    b.HasOne("Sklep.Core.Models.ApplicationUser", "User")
+                        .WithMany("Addresses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Sklep.Core.Models.DiscountCodeUsage", b =>
+                {
+                    b.HasOne("Sklep.Core.Models.DiscountCode", "DiscountCode")
+                        .WithMany("Usages")
+                        .HasForeignKey("DiscountCodeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Sklep.Core.Models.Order", "Order")
+                        .WithMany("DiscountCodeUsages")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DiscountCode");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("Sklep.Core.Models.OrderItem", b =>
                 {
                     b.HasOne("Sklep.Core.Models.Order", "Order")
@@ -687,6 +977,17 @@ namespace Sklep.Infrastructure.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Sklep.Core.Models.Payment", b =>
+                {
+                    b.HasOne("Sklep.Core.Models.Order", "Order")
+                        .WithOne("Payment")
+                        .HasForeignKey("Sklep.Core.Models.Payment", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Sklep.Core.Models.Product", b =>
@@ -711,6 +1012,17 @@ namespace Sklep.Infrastructure.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Sklep.Core.Models.ProductQuestion", b =>
+                {
+                    b.HasOne("Sklep.Core.Models.Product", "Product")
+                        .WithMany("ProductQuestions")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Sklep.Core.Models.ProductVariant", b =>
                 {
                     b.HasOne("Sklep.Core.Models.Product", "Product")
@@ -728,6 +1040,17 @@ namespace Sklep.Infrastructure.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Size");
+                });
+
+            modelBuilder.Entity("Sklep.Core.Models.ProductViewHistory", b =>
+                {
+                    b.HasOne("Sklep.Core.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Sklep.Core.Models.Review", b =>
@@ -768,19 +1091,35 @@ namespace Sklep.Infrastructure.Migrations
                     b.Navigation("Wishlist");
                 });
 
+            modelBuilder.Entity("Sklep.Core.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Addresses");
+                });
+
             modelBuilder.Entity("Sklep.Core.Models.Category", b =>
                 {
                     b.Navigation("Products");
                 });
 
+            modelBuilder.Entity("Sklep.Core.Models.DiscountCode", b =>
+                {
+                    b.Navigation("Usages");
+                });
+
             modelBuilder.Entity("Sklep.Core.Models.Order", b =>
                 {
+                    b.Navigation("DiscountCodeUsages");
+
                     b.Navigation("Items");
+
+                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("Sklep.Core.Models.Product", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("ProductQuestions");
 
                     b.Navigation("Reviews");
 

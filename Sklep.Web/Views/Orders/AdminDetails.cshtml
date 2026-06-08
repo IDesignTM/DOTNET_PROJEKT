@@ -18,19 +18,40 @@
         <tr>
             <th>Produkt</th>
             <th>Ilość</th>
-            <th>Cena</th>
+            <th>Cena za sztukę</th>
+            <th>Wartość</th>
         </tr>
     </thead>
+
     <tbody>
         @foreach (var item in Model.Items)
         {
             <tr>
                 <td>@item.Product.Name</td>
                 <td>@item.Quantity</td>
-                <td>@item.UnitPrice zł</td>
+                <td>@item.UnitPrice.ToString("C")</td>
+                <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
             </tr>
         }
     </tbody>
+
+    @if (!string.IsNullOrEmpty(Model.ShippingMethodName))
+    {
+        <tr class="table-light">
+            <td>@Model.ShippingMethodName</td>
+            <td>1</td>
+            <td>@Model.ShippingPrice zł</td>
+            <td>@Model.ShippingPrice zł</td>
+        </tr>
+    }
+
+    @if (Model.DiscountAmount > 0)
+    {
+        <tr>
+            <td>Rabat</td>
+            <td>-@Model.DiscountAmount zł (@Model.DiscountCode)</td>
+        </tr>
+    }
 </table>
 
 <a asp-action="AllOrders" class="btn btn-secondary">
