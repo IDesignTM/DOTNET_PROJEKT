@@ -90,8 +90,8 @@
                     </div>
                     
                     @{
-    var isAvailable = Model.Variants != null && Model.Variants.Any(v => v.StockQuantity > 0);
-}
+                        var isAvailable = Model.Variants != null && Model.Variants.Any(v => v.StockQuantity > 0);
+                    }
 
                     <div class="w-100 my-4">
                         <label class="form-label small text-uppercase fw-bold" style="letter-spacing: 0.05em;">Dostępne warianty</label>
