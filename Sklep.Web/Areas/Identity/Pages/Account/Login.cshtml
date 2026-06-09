@@ -5,50 +5,49 @@
     ViewData["Title"] = "Zaloguj się";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
-        <section>
-            <form id="account" method="post">
-                <hr />
-                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+<div class="container py-5">
+    <div class="d-flex justify-content-center">
+        <div style="width: 100%; max-width: 500px;">
 
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="nazwa@przyklad.com" />
-                    <label asp-for="Input.Email" class="form-label">E-mail</label>
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
-                </div>
+            <h2 class="mb-4 text-uppercase fw-bold text-center" style="letter-spacing: 0.05em;">@ViewData["Title"]</h2>
 
-                <div class="form-floating mb-3">
-                    <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="hasło" />
-                    <label asp-for="Input.Password" class="form-label">Hasło</label>
-                    <span asp-validation-for="Input.Password" class="text-danger"></span>
-                </div>
+            <div class="card border-0 shadow-sm bg-white p-4">
+                <form id="account" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3" role="alert"></div>
 
-                <div class="checkbox mb-3">
-                    <label asp-for="Input.RememberMe" class="form-label">
+                    <div class="mb-3">
+                        <label asp-for="Input.Email" class="form-label fw-bold small text-uppercase">E-mail</label>
+                        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="nazwa@przyklad.com" />
+                        <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.Password" class="form-label fw-bold small text-uppercase">Hasło</label>
+                        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="••••••••" />
+                        <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4 form-check">
                         <input class="form-check-input" asp-for="Input.RememberMe" />
-                        Zapamiętaj mnie
-                    </label>
-                </div>
+                        <label asp-for="Input.RememberMe" class="form-check-label small fw-bold text-uppercase">Zapamiętaj mnie</label>
+                    </div>
 
-                <div>
-                    <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Zaloguj się</button>
-                </div>
+                    <button id="login-submit" type="submit" class="btn btn-dark w-100 text-uppercase mb-3" style="letter-spacing: 0.05em;">Zaloguj się</button>
 
-                <div>
-                    <p>
-                        <a id="forgot-password" asp-page="./ForgotPassword">Nie pamiętam hasła</a>
-                    </p>
-                    <p>
-                        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Utwórz nowe konto</a>
-                    </p>
-                    <p>
-                        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Wyślij ponownie e-mail potwierdzający</a>
-                    </p>
-                </div>
-            </form>
-        </section>
+                    <div class="text-center small">
+                        <p class="mb-1">
+                            <a id="forgot-password" asp-page="./ForgotPassword" class="text-muted text-decoration-none">Nie pamiętam hasła</a>
+                        </p>
+                        <p class="mb-1">
+                            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-dark fw-bold text-decoration-none">Utwórz nowe konto</a>
+                        </p>
+                        <p class="mb-0">
+                            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="text-muted text-decoration-none">Wyślij ponownie e-mail potwierdzający</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 

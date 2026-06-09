@@ -1,51 +1,35 @@
 ﻿@model Sklep.Core.Models.Order
 
-<h2>Zamówienie #@Model.Id</h2>
+@{
+    ViewData["Title"] = "Zarządzaj zamówieniem #" + Model.Id;
+}
 
-<form method="post">
-
-    <div class="mb-3">
-        <label class="form-label">Status</label>
-
-        <select name="status" class="form-select">
-
-            <option value="Nowe"
-                    selected="@(Model.Status=="Nowe")">
-                Nowe
-            </option>
-
-            <option value="W realizacji"
-                    selected="@(Model.Status=="W realizacji")">
-                W realizacji
-            </option>
-
-            <option value="Wysłane"
-                    selected="@(Model.Status=="Wysłane")">
-                Wysłane
-            </option>
-
-            <option value="Dostarczone"
-                    selected="@(Model.Status=="Dostarczone")">
-                Dostarczone
-            </option>
-
-            <option value="Anulowane"
-                    selected="@(Model.Status=="Anulowane")">
-                Anulowane
-            </option>
-
-        </select>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-uppercase fw-bold text-dark mb-0" style="letter-spacing: 0.05em;">Zarządzaj zamówieniem #@Model.Id</h2>
+        <a asp-action="AllOrders" class="btn btn-outline-secondary text-uppercase px-4" style="font-size: 0.85rem; letter-spacing: 0.05em;">Powrót</a>
     </div>
 
-    <button type="submit"
-            class="btn btn-success">
-        Zapisz
-    </button>
+    <div class="card border-0 shadow-sm bg-white p-4" style="max-width: 500px;">
+        <form asp-action="Manage" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
 
-    <a asp-action="GeneratePdf"
-       asp-route-id="@Model.Id"
-       class="btn btn-success">
-        Pobierz fakturę PDF
-    </a>
+            <div class="mb-4">
+                <label class="form-label fw-bold small text-uppercase">Status zamówienia</label>
 
-</form>
+                <select name="status" class="form-select custom-select-style shadow-sm">
+                    <option value="Nowe" selected="@(Model.Status == "Nowe")">Nowe</option>
+                    <option value="W realizacji" selected="@(Model.Status == "W realizacji")">W realizacji</option>
+                    <option value="Wysłane" selected="@(Model.Status == "Wysłane")">Wysłane</option>
+                    <option value="Dostarczone" selected="@(Model.Status == "Dostarczone")">Dostarczone</option>
+                    <option value="Anulowane" selected="@(Model.Status == "Anulowane")">Anulowane</option>
+                </select>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-dark text-uppercase px-4" style="letter-spacing: 0.05em;">Zapisz zmiany</button>
+                <a asp-action="GeneratePdf" asp-route-id="@Model.Id" class="btn btn-outline-dark text-uppercase px-4" style="letter-spacing: 0.05em;">Faktura PDF</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,42 +1,48 @@
 ﻿@model IEnumerable<Sklep.Core.Models.ProductQuestion>
 
-<h2>Pytania użytkowników</h2>
+@{
+    ViewData["Title"] = "Pytania użytkowników";
+}
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Produkt</th>
-            <th>Pytanie</th>
-            <th>Odpowiedź</th>
-            <th>Akcja</th>
-        </tr>
-    </thead>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-uppercase fw-bold text-dark mb-0" style="letter-spacing: 0.05em;">Pytania użytkowników</h2>
+    </div>
 
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Product.Name</td>
-                <td>@item.Question</td>
-                <td>@item.Answer</td>
+    <div class="card border-0 shadow-sm bg-white">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-uppercase small fw-bold" style="letter-spacing: 0.05em;">
+                    <tr>
+                        <th class="ps-4 py-3">Produkt</th>
+                        <th class="py-3">Pytanie</th>
+                        <th class="py-3">Odpowiedź</th>
+                        <th class="text-end pe-4 py-3">Akcja</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-medium text-dark">@item.Product.Name</td>
+                            <td class="text-secondary">@item.Question</td>
+                            <td class="text-dark">@(string.IsNullOrEmpty(item.Answer) ? "-" : item.Answer)</td>
+                            <td class="text-end pe-4">
+                                <form asp-controller="ProductQuestions" asp-action="Answer" method="post" class="d-flex gap-2 justify-content-end align-items-center">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.Id" />
 
-                <td>
-                    <form asp-controller="ProductQuestions"
-                          asp-action="Answer"
-                          method="post">
+                                    <input type="text" name="answer" class="form-control form-control-sm" style="max-width: 200px;" placeholder="Wpisz odpowiedź..." />
 
-                        @Html.AntiForgeryToken()
-
-                        <input type="hidden" name="id" value="@item.Id" />
-
-                        <input type="text" name="answer" class="form-control" />
-
-                        <button class="btn btn-success btn-sm mt-1">
-                            Odpowiedz
-                        </button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                                    <button type="submit" class="btn btn-sm btn-outline-dark text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">
+                                        Odpowiedz
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

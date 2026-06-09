@@ -1,130 +1,91 @@
 ﻿@model Sklep.Core.Models.Order
 
-<h2>Zamówienie #@Model.Id</h2>
-
-<hr />
-
-@if (Model.Status == "Nowe")
-{
-    <span class="badge bg-primary">@Model.Status</span>
-}
-else if (Model.Status == "W realizacji")
-{
-    <span class="badge bg-warning">@Model.Status</span>
-}
-else if (Model.Status == "Wysłane")
-{
-    <span class="badge bg-info">@Model.Status</span>
-}
-else if (Model.Status == "Dostarczone")
-{
-    <span class="badge bg-success">@Model.Status</span>
-}
-else
-{
-    <span class="badge bg-danger">@Model.Status</span>
+@{
+    ViewData["Title"] = "Zamówienie #" + Model.Id;
 }
 
-<p>
-    <strong>Imię:</strong>
-    @Model.FirstName
-</p>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-uppercase fw-bold text-dark mb-0" style="letter-spacing: 0.05em;">Zamówienie #@Model.Id</h2>
+        <a asp-controller="Orders" asp-action="MyOrders" class="btn btn-outline-secondary text-uppercase px-4" style="font-size: 0.85rem; letter-spacing: 0.05em;">Powrót</a>
+    </div>
 
-<p>
-    <strong>Nazwisko:</strong>
-    @Model.LastName
-</p>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 p-4">
+                <h6 class="text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 0.1em;">Dane dostawy</h6>
+                <p class="mb-1"><strong>Osoba:</strong> @Model.FirstName @Model.LastName</p>
+                <p class="mb-1"><strong>Adres:</strong> @Model.Address, @Model.PostalCode @Model.City</p>
+                <div class="mt-3">
+                    <span class="badge bg-dark text-uppercase" style="letter-spacing: 0.05em;">Status: @Model.Status</span>
+                </div>
+            </div>
+        </div>
 
-<p>
-    <strong>Ulica:</strong>
-    @Model.Address
-</p>
+        <div class="col-md-6 mb-4">
+            <div class="card border-0 shadow-sm h-100 p-4">
+                <h6 class="text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 0.1em;">Płatność</h6>
+                <p class="mb-1"><strong>Status:</strong> @(Model.Payment?.Status ?? "Brak danych")</p>
+                <p class="mb-3"><strong>Metoda:</strong> @(Model.Payment?.Method ?? "Brak")</p>
 
-<p>
-    <strong>Miasto:</strong>
-    @Model.City
-</p>
+                <div class="d-flex gap-2">
+                    @if (Model.Payment != null && Model.Payment.Status == "Oczekująca")
+                    {
+                        <a asp-controller="Payment" asp-action="Pay" asp-route-orderId="@Model.Id" class="btn btn-dark btn-sm text-uppercase" style="letter-spacing: 0.05em;">Opłać zamówienie</a>
+                    }
+                    <a asp-action="GeneratePdf" asp-route-id="@Model.Id" class="btn btn-outline-dark btn-sm text-uppercase" style="letter-spacing: 0.05em;">Pobierz Fakturę PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<p>
-    <strong>Kod pocztowy:</strong>
-    @Model.PostalCode
-</p>
+    <div class="card border-0 shadow-sm bg-white mb-4">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-uppercase small fw-bold" style="letter-spacing: 0.05em;">
+                    <tr>
+                        <th class="ps-4 py-3">Produkt</th>
+                        <th class="py-3">Ilość</th>
+                        <th class="py-3">Cena jedn.</th>
+                        <th class="text-end pe-4 py-3">Wartość</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="ps-4">@item.Product.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.UnitPrice.ToString("C")</td>
+                            <td class="text-end pe-4 fw-bold">@((item.Quantity * item.UnitPrice).ToString("C"))</td>
+                        </tr>
+                    }
 
-<hr />
+                    @if (!string.IsNullOrEmpty(Model.ShippingMethodName))
+                    {
+                        <tr class="table-light">
+                            <td class="ps-4 text-muted">Dostawa: @Model.ShippingMethodName</td>
+                            <td>1</td>
+                            <td>@Model.ShippingPrice.ToString("C")</td>
+                            <td class="text-end pe-4">@Model.ShippingPrice.ToString("C")</td>
+                        </tr>
+                    }
 
-<h4>Produkty</h4>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Produkt</th>
-            <th>Ilość</th>
-            <th>Cena za sztukę</th>
-            <th>Wartość</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var item in Model.Items)
-        {
-            <tr>
-                <td>@item.Product.Name</td>
-                <td>@item.Quantity</td>
-                <td>@item.UnitPrice.ToString("C")</td>
-                <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
-            </tr>
-        }
-    </tbody>
-
-    @if (!string.IsNullOrEmpty(Model.ShippingMethodName))
-    {
-        <tr class="table-light">
-            <td>@Model.ShippingMethodName</td>
-            <td>1</td>
-            <td>@Model.ShippingPrice zł</td>
-            <td>@Model.ShippingPrice zł</td>
-        </tr>
-    }
-
-    @if (Model.DiscountAmount > 0)
-    {
-        <tr>
-            <td>Rabat</td>
-            <td>-@Model.DiscountAmount zł (@Model.DiscountCode)</td>
-        </tr>
-    }
-</table>
-
-<h4>Płatność</h4>
-
-<p>
-    <strong>Status:</strong>
-    @Model.Payment?.Status
-</p>
-
-<p>
-    <strong>Metoda:</strong>
-    @Model.Payment?.Method
-</p>
-
-@if (Model.Payment != null &&
-    Model.Payment.Status == "Oczekująca")
-{
-    <a asp-controller="Payment"
-       asp-action="Pay"
-       asp-route-orderId="@Model.Id"
-       class="btn btn-success">
-        Opłać zamówienie
-    </a>
-}
-
-<a asp-action="GeneratePdf"
-   asp-route-id="@Model.Id"
-   class="btn btn-success">
-    Pobierz fakturę PDF
-</a>
-
-<h4>
-    Razem:
-    @Model.TotalPrice.ToString("C")
-</h4>
+                    @if (Model.DiscountAmount > 0)
+                    {
+                        <tr class="table-warning">
+                            <td class="ps-4 fw-bold text-danger">Rabat</td>
+                            <td colspan="2" class="text-muted small">(@Model.DiscountCode)</td>
+                            <td class="text-end pe-4 fw-bold text-danger">-@Model.DiscountAmount.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-light border-0 p-4 text-end">
+            <h5 class="mb-0 text-uppercase" style="letter-spacing: 0.05em;">
+                Razem: <span class="fw-bold">@Model.TotalPrice.ToString("C")</span>
+            </h5>
+        </div>
+    </div>
+</div>

@@ -1,29 +1,43 @@
 ﻿@model Sklep.Core.Models.Address
 
-<h2>Dodaj adres</h2>
+@{
+    ViewData["Title"] = "Dodaj adres";
+}
 
-<div asp-validation-summary="All" class="text-danger"></div>
+<div class="container py-4">
+    <h2 class="mb-4 text-uppercase fw-bold" style="letter-spacing: 0.05em;">Dodaj adres</h2>
 
-<form asp-action="Create" method="post">
-    @Html.AntiForgeryToken()
+    <div class="card border-0 shadow-sm bg-white p-4" style="max-width: 500px;">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
-    <div class="mb-3">
-        <label>Ulica</label>
-        <input asp-for="Street" class="form-control" />
+            <div class="mb-4">
+                <label asp-for="Street" class="form-label fw-bold small text-uppercase">Ulica</label>
+                <input asp-for="Street" class="form-control" />
+                <span asp-validation-for="Street" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="City" class="form-label fw-bold small text-uppercase">Miasto</label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="PostalCode" class="form-label fw-bold small text-uppercase">Kod pocztowy</label>
+                <input asp-for="PostalCode" class="form-control" />
+                <span asp-validation-for="PostalCode" class="text-danger small"></span>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-dark text-uppercase px-4" style="letter-spacing: 0.05em;">Zapisz</button>
+                <a asp-action="Index" class="btn btn-outline-secondary text-uppercase px-4" style="letter-spacing: 0.05em;">Anuluj</a>
+            </div>
+        </form>
     </div>
+</div>
 
-    <div class="mb-3">
-        <label>Miasto</label>
-        <input asp-for="City" class="form-control" />
-    </div>
-
-    <div class="mb-3">
-        <label>Kod pocztowy</label>
-        <input asp-for="PostalCode" class="form-control" />
-    </div>
-
-    <button type="submit" class="btn btn-success">
-        Zapisz
-    </button>
-
-</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

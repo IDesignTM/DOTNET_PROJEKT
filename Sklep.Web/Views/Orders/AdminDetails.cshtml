@@ -1,59 +1,69 @@
 ﻿@model Sklep.Core.Models.Order
 
-<h2>Szczegóły zamówienia #@Model.Id</h2>
+@{
+    ViewData["Title"] = "Szczegóły zamówienia #" + Model.Id;
+}
 
-<hr />
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-uppercase fw-bold text-dark mb-0" style="letter-spacing: 0.05em;">Szczegóły zamówienia #@Model.Id</h2>
+        <a asp-action="AllOrders" class="btn btn-outline-secondary text-uppercase px-4" style="font-size: 0.85rem; letter-spacing: 0.05em;">Powrót</a>
+    </div>
 
-<p><strong>Klient:</strong> @Model.FirstName @Model.LastName</p>
-<p><strong>Adres:</strong> @Model.Address</p>
-<p><strong>Miasto:</strong> @Model.City</p>
-<p><strong>Kod pocztowy:</strong> @Model.PostalCode</p>
-<p><strong>Status:</strong> @Model.Status</p>
-<p><strong>Wartość:</strong> @Model.TotalPrice zł</p>
+    <div class="card border-0 shadow-sm p-4 mb-4">
+        <h6 class="text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 0.1em;">Dane klienta</h6>
+        <p class="mb-1"><strong>Osoba:</strong> @Model.FirstName @Model.LastName</p>
+        <p class="mb-1"><strong>Adres:</strong> @Model.Address, @Model.PostalCode @Model.City</p>
+        <div class="mt-2">
+            <span class="badge bg-dark text-uppercase" style="letter-spacing: 0.05em;">Status: @Model.Status</span>
+        </div>
+    </div>
 
-<h4>Produkty</h4>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Produkt</th>
-            <th>Ilość</th>
-            <th>Cena za sztukę</th>
-            <th>Wartość</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var item in Model.Items)
-        {
-            <tr>
-                <td>@item.Product.Name</td>
-                <td>@item.Quantity</td>
-                <td>@item.UnitPrice.ToString("C")</td>
-                <td>@((item.Quantity * item.UnitPrice).ToString("C"))</td>
-            </tr>
-        }
-    </tbody>
-
-    @if (!string.IsNullOrEmpty(Model.ShippingMethodName))
-    {
-        <tr class="table-light">
-            <td>@Model.ShippingMethodName</td>
-            <td>1</td>
-            <td>@Model.ShippingPrice zł</td>
-            <td>@Model.ShippingPrice zł</td>
-        </tr>
-    }
-
-    @if (Model.DiscountAmount > 0)
-    {
-        <tr>
-            <td>Rabat</td>
-            <td>-@Model.DiscountAmount zł (@Model.DiscountCode)</td>
-        </tr>
-    }
-</table>
-
-<a asp-action="AllOrders" class="btn btn-secondary">
-    Powrót
-</a>
+    <div class="card border-0 shadow-sm bg-white mb-4">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-uppercase small fw-bold" style="letter-spacing: 0.05em;">
+                    <tr>
+                        <th class="ps-4 py-3">Produkt</th>
+                        <th class="py-3">Ilość</th>
+                        <th class="py-3">Cena jedn.</th>
+                        <th class="text-end pe-4 py-3">Wartość</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td class="ps-4">@item.Product.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.UnitPrice.ToString("C")</td>
+                            <td class="text-end pe-4 fw-bold">@((item.Quantity * item.UnitPrice).ToString("C"))</td>
+                        </tr>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.ShippingMethodName))
+                    {
+                        <tr class="table-light">
+                            <td class="ps-4 text-muted">Dostawa: @Model.ShippingMethodName</td>
+                            <td>1</td>
+                            <td>@Model.ShippingPrice.ToString("C")</td>
+                            <td class="text-end pe-4">@Model.ShippingPrice.ToString("C")</td>
+                        </tr>
+                    }
+                    @if (Model.DiscountAmount > 0)
+                    {
+                        <tr class="table-warning">
+                            <td class="ps-4 fw-bold text-danger">Rabat</td>
+                            <td colspan="2" class="text-muted small">(@Model.DiscountCode)</td>
+                            <td class="text-end pe-4 fw-bold text-danger">-@Model.DiscountAmount.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer bg-light border-0 p-4 text-end">
+            <h5 class="mb-0 text-uppercase" style="letter-spacing: 0.05em;">
+                Razem: <span class="fw-bold">@Model.TotalPrice.ToString("C")</span>
+            </h5>
+        </div>
+    </div>
+</div>

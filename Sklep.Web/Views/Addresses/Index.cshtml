@@ -1,36 +1,51 @@
 ﻿@model IEnumerable<Sklep.Core.Models.Address>
 
-<h2>Moje adresy</h2>
+@{
+    ViewData["Title"] = "Moje adresy";
+}
 
-<a class="btn btn-primary mb-3" asp-action="Create">
-    Dodaj adres
-</a>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-uppercase fw-bold text-dark mb-0" style="letter-spacing: 0.05em;">Moje adresy</h2>
+        <a asp-action="Create" class="btn btn-dark text-uppercase px-4" style="font-size: 0.85rem; letter-spacing: 0.05em;">Dodaj adres</a>
+    </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Ulica</th>
-            <th>Miasto</th>
-            <th>Kod</th>
-            <th></th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var a in Model)
-        {
-            <tr>
-                <td>@a.Street</td>
-                <td>@a.City</td>
-                <td>@a.PostalCode</td>
-                <td>
-                    <a class="btn btn-danger btn-sm"
-                       asp-action="Delete"
-                       asp-route-id="@a.Id">
-                        Usuń
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="card border-0 shadow-sm bg-white">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-uppercase small fw-bold" style="letter-spacing: 0.05em;">
+                    <tr>
+                        <th class="ps-4 py-3">Ulica</th>
+                        <th class="py-3">Miasto</th>
+                        <th class="py-3">Kod pocztowy</th>
+                        <th class="text-end pe-4 py-3">Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-muted small">Brak zapisanych adresów.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var a in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 fw-medium text-dark">@a.Street</td>
+                                <td>@a.City</td>
+                                <td>@a.PostalCode</td>
+                                <td class="text-end pe-4">
+                                    <div class="d-flex gap-2 justify-content-end">
+                                        <a asp-action="Delete" asp-route-id="@a.Id" class="btn btn-sm btn-outline-danger text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Usuń</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,176 +1,151 @@
 ﻿@model Sklep.Web.ViewModels.CheckoutViewModel
 
-<h2>Zamówienie</h2>
+@{
+    ViewData["Title"] = "Zamówienie";
+}
 
-<form asp-action="Checkout" method="post">
-    @Html.AntiForgeryToken()
+<div class="container py-5">
+    <div class="d-flex justify-content-center">
+        <div style="width: 100%; max-width: 600px;">
 
-    <div class="mb-3">
-        <label>Imię</label>
-        <input asp-for="FirstName" class="form-control" />
-    </div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="text-uppercase fw-bold text-dark mb-0" style="letter-spacing: 0.05em;">Realizacja zamówienia</h2>
+            </div>
 
-    <div class="mb-3">
-        <label>Nazwisko</label>
-        <input asp-for="LastName" class="form-control" />
-    </div>
+            <form asp-action="Checkout" method="post" class="card border-0 shadow-sm bg-white p-4">
+                @Html.AntiForgeryToken()
 
-    <div class="mb-3">
-        <label>Zapisane adresy</label>
-        <select asp-for="SelectedAddressId" id="savedAddressSelect" class="form-control">
-            <option value="">-- wybierz --</option>
+                <h6 class="text-uppercase fw-bold text-muted mb-4" style="letter-spacing: 0.1em;">Dane dostawy</h6>
 
-            @foreach (var a in ViewBag.Addresses)
-            {
-                <option value="@a.Id"
-                        data-address="@a.Street"
-                        data-city="@a.City"
-                        data-postal="@a.PostalCode">
-                    @a.Street, @a.City, @a.PostalCode
-                </option>
-            }
-        </select>
-    </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small text-uppercase fw-bold">Imię</label>
+                        <input asp-for="FirstName" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small text-uppercase fw-bold">Nazwisko</label>
+                        <input asp-for="LastName" class="form-control" />
+                    </div>
+                </div>
 
-    <div class="mb-3">
-        <label>Ulica</label>
-        <input asp-for="Address" id="addressInput" class="form-control" />
-    </div>
+                <div class="mb-3">
+                    <label class="form-label small text-uppercase fw-bold">Zapisane adresy</label>
+                    <select asp-for="SelectedAddressId" id="savedAddressSelect" class="form-select">
+                        <option value="">-- wybierz --</option>
+                        @foreach (var a in ViewBag.Addresses)
+                        {
+                            <option value="@a.Id" data-address="@a.Street" data-city="@a.City" data-postal="@a.PostalCode">
+                                @a.Street, @a.City, @a.PostalCode
+                            </option>
+                        }
+                    </select>
+                </div>
 
-    <div class="mb-3">
-        <label>Miasto</label>
-        <input asp-for="City" id="cityInput" class="form-control" />
-    </div>
+                <div class="mb-3">
+                    <label class="form-label small text-uppercase fw-bold">Ulica</label>
+                    <input asp-for="Address" id="addressInput" class="form-control" />
+                </div>
 
-    <div class="mb-3">
-        <label>Kod pocztowy</label>
-        <input asp-for="PostalCode" id="postalInput" class="form-control" />
-    </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small text-uppercase fw-bold">Miasto</label>
+                        <input asp-for="City" id="cityInput" class="form-control" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label small text-uppercase fw-bold">Kod pocztowy</label>
+                        <input asp-for="PostalCode" id="postalInput" class="form-control" />
+                    </div>
+                </div>
 
-    <div class="mb-3">
-        <label>Kod rabatowy</label>
-        <div class="d-flex gap-2">
-            <input asp-for="DiscountCode" id="discountCode" class="form-control" />
-            <button type="button" id="checkDiscount" class="btn btn-outline-primary">
-                Sprawdź
-            </button>
+                <hr class="my-3" />
+
+                <div class="mb-3">
+                    <label class="form-label small text-uppercase fw-bold">Metoda dostawy</label>
+                    <select asp-for="ShippingMethodId" class="form-select" id="shippingSelect">
+                        <option value="" data-price="0">-- wybierz --</option>
+                        @foreach (var s in ViewBag.ShippingMethods)
+                        {
+                            <option value="@s.Id" data-price="@s.Price">@s.Name (@s.Price zł)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label small text-uppercase fw-bold">Kod rabatowy</label>
+                    <div class="input-group">
+                        <input asp-for="DiscountCode" id="discountCode" class="form-control" />
+                        <button type="button" id="checkDiscount" class="btn btn-outline-dark">Sprawdź</button>
+                    </div>
+                    <small id="discountMessage"></small>
+                </div>
+
+                <input type="hidden" id="baseTotal" value="@ViewBag.Total" />
+
+                <div class="d-flex justify-content-between align-items-center mt-3 p-3 bg-light rounded">
+                    <h5 class="mb-0 text-uppercase" style="letter-spacing: 0.05em;">Do zapłaty:</h5>
+                    <h5 class="mb-0 fw-bold"><span id="totalPrice">@ViewBag.Total</span> zł</h5>
+                </div>
+
+                <button type="submit" class="btn btn-dark text-uppercase w-100 mt-4 py-2" style="letter-spacing: 0.05em;">Złóż zamówienie</button>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const select = document.getElementById("savedAddressSelect");
+                        select.addEventListener("change", function () {
+                            const selected = this.options[this.selectedIndex];
+                            document.getElementById("addressInput").value = selected.dataset.address || "";
+                            document.getElementById("cityInput").value = selected.dataset.city || "";
+                            document.getElementById("postalInput").value = selected.dataset.postal || "";
+                        });
+                    });
+                </script>
+
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const shippingSelect = document.getElementById("shippingSelect");
+                        const totalPriceEl = document.getElementById("totalPrice");
+                        const baseTotalEl = document.getElementById("baseTotal");
+                        const discountInput = document.getElementById("discountCode");
+                        const checkBtn = document.getElementById("checkDiscount");
+                        const msg = document.getElementById("discountMessage");
+
+                        const baseTotal = parseFloat(baseTotalEl.value || "0");
+                        let discountPercent = 0;
+
+                        function recalc() {
+                            const shippingOption = shippingSelect.options[shippingSelect.selectedIndex];
+                            const shipping = parseFloat(shippingOption?.dataset.price || "0");
+                            const discounted = baseTotal - (baseTotal * discountPercent / 100);
+                            const finalTotal = discounted + shipping;
+                            totalPriceEl.innerText = finalTotal.toFixed(2);
+                        }
+
+                        shippingSelect.addEventListener("change", recalc);
+
+                        checkBtn.addEventListener("click", async function () {
+                            const formData = new FormData();
+                            formData.append("code", discountInput.value);
+                            const response = await fetch('/Orders/ValidateDiscount', {
+                                method: 'POST',
+                                body: formData,
+                                headers: { 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value }
+                            });
+                            const data = await response.json();
+                            if (data.valid) {
+                                discountPercent = Number(data.percent || 0);
+                                msg.textContent = "Kod aktywny";
+                                msg.className = "text-success";
+                            } else {
+                                discountPercent = 0;
+                                msg.textContent = "Kod nieprawidłowy";
+                                msg.className = "text-danger";
+                            }
+                            recalc();
+                        });
+                        recalc();
+                    });
+                </script>
+            </form>
         </div>
-
-        <small id="discountMessage"></small>
     </div>
-
-    <div class="mb-3">
-        <label>Metoda dostawy</label>
-
-        <select asp-for="ShippingMethodId" class="form-control" id="shippingSelect">
-            <option value="" data-price="0">-- wybierz --</option>
-
-            @foreach (var s in ViewBag.ShippingMethods)
-            {
-                <option value="@s.Id" data-price="@s.Price">
-                    @s.Name (@s.Price zł)
-                </option>
-            }
-        </select>
-    </div>
-
-    <input type="hidden" id="baseTotal" value="@ViewBag.Total" />
-
-    <br>
-    <h5>Do zapłaty: <span id="totalPrice">@ViewBag.Total</span> zł</h5>
-    <br>
-
-    <button type="submit" class="btn btn-success">
-        Złóż zamówienie
-    </button>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            const select = document.getElementById("savedAddressSelect");
-
-            select.addEventListener("change", function () {
-
-                const selected =
-                    this.options[this.selectedIndex];
-
-                document.getElementById("addressInput").value =
-                    selected.dataset.address || "";
-
-                document.getElementById("cityInput").value =
-                    selected.dataset.city || "";
-
-                document.getElementById("postalInput").value =
-                    selected.dataset.postal || "";
-            });
-
-        });
-    </script>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            // ===== ELEMENTY =====
-            const shippingSelect = document.getElementById("shippingSelect");
-            const totalPriceEl = document.getElementById("totalPrice");
-            const baseTotalEl = document.getElementById("baseTotal");
-            const discountInput = document.getElementById("discountCode");
-            const checkBtn = document.getElementById("checkDiscount");
-            const msg = document.getElementById("discountMessage");
-
-            // ===== STAN =====
-            const baseTotal = parseFloat(baseTotalEl.value || "0");
-            let discountPercent = 0;
-
-            // ===== FUNKCJA LICZENIA =====
-            function recalc() {
-
-                const shippingOption = shippingSelect.options[shippingSelect.selectedIndex];
-                const shipping = parseFloat(shippingOption?.dataset.price || "0");
-
-                const discounted = baseTotal - (baseTotal * discountPercent / 100);
-                const finalTotal = discounted + shipping;
-
-                totalPriceEl.innerText = finalTotal.toFixed(2);
-            }
-
-            // ===== DOSTAWA =====
-            shippingSelect.addEventListener("change", recalc);
-
-            // ===== RABAT =====
-            checkBtn.addEventListener("click", async function () {
-
-                const formData = new FormData();
-                formData.append("code", discountInput.value);
-
-                const response = await fetch('/Orders/ValidateDiscount', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'RequestVerificationToken':
-                            document.querySelector('input[name="__RequestVerificationToken"]').value
-                    }
-                });
-
-                const data = await response.json();
-
-                console.log("discount response:", data);
-
-                if (data.valid) {
-                    discountPercent = Number(data.percent || 0);
-                    msg.textContent = "Kod aktywny";
-                    msg.className = "text-success";
-                } else {
-                    discountPercent = 0;
-                    msg.textContent = "Kod nieprawidłowy";
-                    msg.className = "text-danger";
-                }
-
-                recalc();
-            });
-
-            // ===== START =====
-            recalc();
-        });
-    </script>
-</form>
+</div>
