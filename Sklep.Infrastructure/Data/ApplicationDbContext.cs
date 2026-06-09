@@ -88,5 +88,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             new ShippingMethod { Id = 2, Name = "Paczkomat", Price = 10, IsActive = true },
             new ShippingMethod { Id = 3, Name = "Odbiór osobisty", Price = 0, IsActive = true }
         );
+
+        builder.Entity<LoginHistory>()
+            .HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId);
     }
 }

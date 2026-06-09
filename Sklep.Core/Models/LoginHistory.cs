@@ -9,4 +9,5 @@ public class LoginHistory
     public DateTime LoginTime { get; set; } = DateTime.Now;
 
     public bool Success { get; set; }
+    public ApplicationUser? User { get; set; }
 }

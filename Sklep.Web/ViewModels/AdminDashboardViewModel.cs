@@ -14,4 +14,9 @@ public class AdminDashboardViewModel
 
     public decimal TotalRevenue { get; set; }
     public List<Order> LatestOrders { get; set; } = new();
+    public List<TopDiscountCodeViewModel> TopDiscountCodes { get; set; } = new();
+
+    public List<TopViewedProductViewModel> TopViewedProducts { get; set; } = new();
+
+    public List<LoginHistory> LatestLogins { get; set; } = new();
 }

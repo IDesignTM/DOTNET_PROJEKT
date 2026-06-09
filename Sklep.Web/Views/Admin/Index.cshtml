@@ -1,77 +1,90 @@
 ﻿@model Sklep.Web.ViewModels.AdminDashboardViewModel
 
-<h2>Panel administratora</h2>
+@{
+    ViewData["Title"] = "Panel administratora";
+}
 
-<div class="row mt-4">
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-uppercase fw-bold text-dark mb-0" style="letter-spacing: 0.05em;">Panel administratora</h2>
+    </div>
 
-    <div class="col-md-3 mb-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h3>@Model.ProductsCount</h3>
-                <p>Produktów</p>
-            </div>
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3"><div class="card border-0 shadow-sm p-4 text-center"><h3 class="fw-bold mb-0">@Model.ProductsCount</h3><p class="text-muted small text-uppercase fw-bold mb-0 mt-2">Produktów</p></div></div>
+        <div class="col-md-3 mb-3"><div class="card border-0 shadow-sm p-4 text-center"><h3 class="fw-bold mb-0">@Model.CategoriesCount</h3><p class="text-muted small text-uppercase fw-bold mb-0 mt-2">Kategorii</p></div></div>
+        <div class="col-md-3 mb-3"><div class="card border-0 shadow-sm p-4 text-center"><h3 class="fw-bold mb-0">@Model.UsersCount</h3><p class="text-muted small text-uppercase fw-bold mb-0 mt-2">Użytkowników</p></div></div>
+        <div class="col-md-3 mb-3"><div class="card border-0 shadow-sm p-4 text-center"><h3 class="fw-bold mb-0">@Model.OrdersCount</h3><p class="text-muted small text-uppercase fw-bold mb-0 mt-2">Zamówień</p></div></div>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4 mb-4 text-center">
+        <h2 class="fw-bold mb-0">@Model.TotalRevenue.ToString("C")</h2>
+        <p class="text-muted small text-uppercase fw-bold mb-0 mt-2">Łączny przychód</p>
+    </div>
+
+    <h6 class="text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 0.1em;">Ostatnie zamówienia</h6>
+    <div class="card border-0 shadow-sm bg-white mb-4">
+        <div class="card-body p-0">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-uppercase small fw-bold">
+                    <tr><th class="ps-4 py-3">Nr</th><th class="py-3">Klient</th><th class="py-3">Kwota</th><th class="text-end pe-4 py-3">Data</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.LatestOrders)
+                    {
+                        <tr>
+                            <td class="ps-4 fw-medium text-dark">#@order.Id</td>
+                            <td>@order.FirstName @order.LastName</td>
+                            <td class="fw-bold">@order.TotalPrice.ToString("C")</td>
+                            <td class="text-end pe-4 text-muted">@order.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <div class="col-md-3 mb-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h3>@Model.CategoriesCount</h3>
-                <p>Kategorii</p>
+    <div class="row">
+
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 pt-3"><h6 class="text-uppercase fw-bold text-muted small">Top 3 kody</h6></div>
+                <table class="table table-hover mb-0">
+                    <tbody class="small">
+                        @foreach (var c in Model.TopDiscountCodes)
+                        {
+                            <tr><td class="ps-4">@c.Code</td><td class="text-end pe-4 text-muted">@c.UsageCount</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 pt-3"><h6 class="text-uppercase fw-bold text-muted small">Top 3 produkty</h6></div>
+                <table class="table table-hover mb-0">
+                    <tbody class="small">
+                        @foreach (var p in Model.TopViewedProducts)
+                        {
+                            <tr><td class="ps-4">@p.ProductName</td><td class="text-end pe-4 text-muted">@p.ViewsCount</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 pt-3"><h6 class="text-uppercase fw-bold text-muted small">Ostatnie logowania</h6></div>
+                <table class="table table-hover mb-0">
+                    <tbody class="small">
+                        @foreach (var l in Model.LatestLogins)
+                        {
+                            <tr><td class="ps-4">@l.User?.UserName</td><td class="text-end pe-4 text-muted">@l.LoginTime.ToString("dd.MM HH:mm")</td></tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h3>@Model.UsersCount</h3>
-                <p>Użytkowników</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3 mb-3">
-        <div class="card text-center">
-            <div class="card-body">
-                <h3>@Model.OrdersCount</h3>
-                <p>Zamówień</p>
-            </div>
-        </div>
-    </div>
-
 </div>
-
-<div class="card mt-3">
-    <div class="card-body text-center">
-        <h2>@Model.TotalRevenue.ToString("C")</h2>
-        <p>Łączny przychód</p>
-    </div>
-</div>
-
-<hr />
-
-<h3>Ostatnie zamówienia</h3>
-
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nr zamówienia</th>
-            <th>Klient</th>
-            <th>Kwota</th>
-            <th>Data</th>
-        </tr>
-    </thead>
-
-    <tbody>
-        @foreach (var order in Model.LatestOrders)
-        {
-            <tr>
-                <td>#@order.Id</td>
-                <td>@order.FirstName @order.LastName</td>
-                <td>@order.TotalPrice.ToString("C")</td>
-                <td>@order.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
-            </tr>
-        }
-    </tbody>
-</table>
