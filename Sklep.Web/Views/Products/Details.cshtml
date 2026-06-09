@@ -244,36 +244,60 @@
                                </div>
                            }
                     </div>
-                    <h4>Pytania użytkowników</h4>
+                    <hr class="w-100 my-4" style="border-top: 1px solid #eee;">
 
-                    @foreach (var q in Model.ProductQuestions)
-                    {
-                        <div class="border p-2 mb-2">
-                            <strong>@q.Question</strong><br />
+                    <div class="w-100 mb-4">
+                        <h6 class="fw-bold text-uppercase mb-3" style="letter-spacing: 0.1em;">Pytania użytkowników (@Model.ProductQuestions.Count)</h6>
 
-                            @if (!string.IsNullOrEmpty(q.Answer))
-                            {
-                                <span class="text-success">@q.Answer</span>
-                            }
-                            else
-                            {
-                                <span class="text-muted">Brak odpowiedzi</span>
-                            }
+                        @if (Model.ProductQuestions.Any())
+                        {
+                            <div class="pe-2" style="max-height: 400px; overflow-y: auto; scrollbar-width: thin;">
+                                @foreach (var q in Model.ProductQuestions.OrderByDescending(q => q.CreatedAt))
+                                {
+                                    <div class="mb-3 p-3 bg-light rounded border-start border-4 border-dark">
+                                        <div class="mb-2">
+                                            <strong class="small text-uppercase">Pytanie:</strong>
+                                            <p class="mb-1">@q.Question</p>
+                                        </div>
+
+                                        <div class="mt-2 pt-2 border-top">
+                                            <strong class="small text-uppercase text-muted">Odpowiedź:</strong>
+                                            @if (!string.IsNullOrEmpty(q.Answer))
+                                            {
+                                                <p class="mb-0 text-dark">@q.Answer</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="mb-0 text-muted fst-italic small">Czeka na odpowiedź sklepu...</p>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted small">Brak pytań dotyczących tego produktu.</p>
+                        }
+
+                        <div class="card border-0 bg-light mt-4">
+                            <div class="card-body">
+                                <h6 class="fw-bold text-uppercase mb-3" style="letter-spacing: 0.1em;">Zadaj pytanie</h6>
+                                <form asp-controller="ProductQuestions" asp-action="Add" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@Model.Id" />
+
+                                    <div class="mb-3">
+                                        <textarea name="question" class="form-control form-control-sm" rows="3" placeholder="Twoje pytanie..." required></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-dark btn-sm text-uppercase" style="letter-spacing: 0.1em;">
+                                        Zadaj pytanie
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    }
-                    <form asp-controller="ProductQuestions" asp-action="Add" method="post">
-
-                        @Html.AntiForgeryToken()
-
-                        <input type="hidden" name="productId" value="@Model.Id" />
-
-                        <textarea name="question" class="form-control"></textarea>
-
-                        <button class="btn btn-primary mt-2">
-                            Zadaj pytanie
-                        </button>
-                    </form>
-                    <div class="flex-grow-1"></div>
+                    </div>
                 </div>
             </div>
         </div>
