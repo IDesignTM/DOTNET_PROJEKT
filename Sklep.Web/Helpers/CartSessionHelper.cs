@@ -12,10 +12,10 @@ namespace Sklep.Web.Helpers
 
             if (string.IsNullOrEmpty(cart))
                 return 0;
-
-            var products = JsonConvert.DeserializeObject<List<Product>>(cart);
-
-            return products?.Count ?? 0;
+            
+            var items = JsonConvert.DeserializeObject<List<CartItem>>(cart);
+            
+            return items?.Sum(i => i.Quantity) ?? 0; 
         }
     }
 }

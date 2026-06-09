@@ -3,8 +3,6 @@ using Sklep.Core.Interfaces;
 using Sklep.Core.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Sklep.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Sklep.Web.Controllers;
 
@@ -24,63 +22,25 @@ public class ProductsController : Controller
         _currencyService = currencyService;
     }
     
-    public async Task<IActionResult> Index(string? categoryName, string? searchString, int? sizeId, string? color, [FromServices] ApplicationDbContext context)
+    public async Task<IActionResult> Index(string? categoryName, string? searchString, int? sizeId, string? color)
     {
-        var query = context.Products
-            .Include(p => p.Category)
-            .Include(p => p.Images)
-            .Include(p => p.Variants)
-            .ThenInclude(v => v.Size)
-            .AsQueryable();
+        var products = await _productRepository.GetFilteredProductsAsync(categoryName, searchString, sizeId, color);
         
-        if (!string.IsNullOrEmpty(categoryName))
-        {
-            query = query.Where(p => p.Category!.Name == categoryName);
-            ViewBag.CurrentCategory = categoryName;
-        }
-        
-        if (!string.IsNullOrEmpty(searchString))
-        {
-            query = query.Where(p => p.Name.ToLower().Contains(searchString.ToLower()));
-            ViewBag.Search = searchString;
-        }
-        
-        if (sizeId.HasValue && sizeId.Value > 0)
-        {
-            query = query.Where(p => p.Variants.Any(v => v.SizeId == sizeId.Value));
-            ViewBag.CurrentSizeId = sizeId;
-        }
-        
-        if (!string.IsNullOrEmpty(color))
-        {
-            query = query.Where(p => p.Variants.Any(v => v.Color.ToLower() == color.ToLower()));
-            ViewBag.CurrentColor = color;
-        }
+        ViewBag.CurrentCategory = categoryName;
+        ViewBag.Search = searchString;
+        ViewBag.CurrentSizeId = sizeId;
+        ViewBag.CurrentColor = color;
 
-        var products = await query.ToListAsync();
-        
         ViewBag.Categories = await _categoryRepository.GetAllAsync();
-        ViewBag.Sizes = await context.Sizes.OrderBy(s => s.Id).ToListAsync();
-        ViewBag.Colors = await context.ProductVariants
-            .Where(v => !string.IsNullOrEmpty(v.Color))
-            .Select(v => v.Color)
-            .Distinct()
-            .ToListAsync();
+        ViewBag.Sizes = await _productRepository.GetAvailableSizesAsync();
+        ViewBag.Colors = await _productRepository.GetAvailableColorsAsync();
     
         return View(products);
     }
     
-    public async Task<IActionResult> Details(int id, [FromServices] ApplicationDbContext context)
+    public async Task<IActionResult> Details(int id)
     {
-        var product = await context.Products
-            .Include(p => p.Category)
-            .Include(p => p.Images)
-            .Include(p => p.Tags)
-            .Include(p => p.Reviews)
-            .Include(p => p.Variants)
-                .ThenInclude(v => v.Size)
-            .Include(p => p.ProductQuestions)
-            .FirstOrDefaultAsync(p => p.Id == id);
+        var product = await _productRepository.GetByIdWithCategoryAsync(id);
 
         if (product == null) return NotFound();
 
@@ -92,17 +52,16 @@ public class ProductsController : Controller
 
         if (!string.IsNullOrEmpty(userId))
         {
-            isInWishlist = await context.WishlistItems
-                .AnyAsync(i => i.ProductId == id && i.Wishlist!.UserId == userId);
+            isInWishlist = await _productRepository.IsProductInWishlistAsync(id, userId);
 
-            context.ProductViewHistories.Add(new ProductViewHistory
+            await _productRepository.AddProductViewHistoryAsync(new ProductViewHistory
             {
                 UserId = userId,
                 ProductId = id,
                 ViewedAt = DateTime.Now
             });
 
-            await context.SaveChangesAsync();
+            await _productRepository.SaveChangesAsync();
         }
         ViewBag.IsInWishlist = isInWishlist;
 
@@ -112,7 +71,7 @@ public class ProductsController : Controller
     [HttpPost]
     [Authorize]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddReview(int productId, int rating, string comment, [FromServices] ApplicationDbContext context)
+    public async Task<IActionResult> AddReview(int productId, int rating, string comment)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -129,8 +88,8 @@ public class ProductsController : Controller
             Comment = comment
         };
 
-        context.Reviews.Add(review);
-        await context.SaveChangesAsync();
+        await _productRepository.AddReviewAsync(review);
+        await _productRepository.SaveChangesAsync();
 
         return RedirectToAction(nameof(Details), new { id = productId });
     }
@@ -138,18 +97,18 @@ public class ProductsController : Controller
     [HttpPost]
     [Authorize]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteReview(int reviewId, int productId, [FromServices] ApplicationDbContext context)
+    public async Task<IActionResult> DeleteReview(int reviewId, int productId)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var review = await context.Reviews.FindAsync(reviewId);
+        var review = await _productRepository.GetReviewByIdAsync(reviewId);
         
         if (review == null || (review.UserId != userId && !User.IsInRole("Admin")))
         {
             return RedirectToAction(nameof(Details), new { id = productId });
         }
 
-        context.Reviews.Remove(review);
-        await context.SaveChangesAsync();
+        _productRepository.DeleteReview(review);
+        await _productRepository.SaveChangesAsync();
 
         return RedirectToAction(nameof(Details), new { id = productId });
     }
@@ -157,7 +116,7 @@ public class ProductsController : Controller
     [HttpPost]
     [Authorize]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> AddQuestion(int productId, string question, [FromServices] ApplicationDbContext context)
+    public async Task<IActionResult> AddQuestion(int productId, string question)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -172,8 +131,8 @@ public class ProductsController : Controller
             CreatedAt = DateTime.Now
         };
 
-        context.ProductQuestions.Add(q);
-        await context.SaveChangesAsync();
+        await _productRepository.AddQuestionAsync(q);
+        await _productRepository.SaveChangesAsync();
 
         return RedirectToAction(nameof(Details), new { id = productId });
     }
